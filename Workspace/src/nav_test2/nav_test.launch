@@ -1,0 +1,4 @@
+<launch>
+  <node pkg="nav_test2" type="nav_test2" name="nav_test_node" output="screen"/>
+  <node pkg="people_detection" type="fake_detection" name="fake_detection_node" args="_x:=0.0 _y:=0.0 _phi:=0.0 _vel:=0.1"/>
+</launch>

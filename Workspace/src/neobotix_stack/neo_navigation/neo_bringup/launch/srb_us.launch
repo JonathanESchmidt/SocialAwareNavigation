@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<launch>
+	<!-- parameters -->
+	<arg name="hasNoTFBroadcast" default="false" /> 
+	<rosparam command="load" ns="srbus" file="$(find neo_base_mp_500)/ros/launch/serrelay/us/$(env ROBOT).yaml"/>
+	<!-- start nodes -->
+	<node pkg="cob_relayboard" type="neo_srb_us" ns="srbus" name="srb_us_node" respawn="false" output="screen"/>
+	<!-- include transformation broadcaster? -->
+	<include if="$(arg hasNoTFBroadcast)" file="$(find neo_base_mp_500)/ros/launch/serrelay/us/srb_tf_us.launch"/>
+
+</launch>
+
+

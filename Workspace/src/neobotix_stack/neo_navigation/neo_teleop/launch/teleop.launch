@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+  <!-- Upload parameters-->
+  <rosparam command="load" ns="neo_teleop" file="$(find neo_teleop)/launch/configs/default.yaml"/>
+
+  <!-- Start cob teleop node -->
+  <node pkg="neo_teleop" type="neo_teleop" name="neo_teleop_node" ns="neo_teleop" output="screen">
+  </node>
+
+  <!-- Run joystick -->
+  <node pkg="joy" type="joy_node" name="joy_node" output="screen">
+    <!-- Input port for the joystick -->
+    <param name="dev" type="string" value="/dev/input/js0" />
+     <!-- Percentage of how much the joystick has to move before sending commands -->
+    <param name="deadzone" value="0.05" />
+  </node>
+</launch>

@@ -1,0 +1,284 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- //////////////////////////////////////////////////////////////////// -->
+  <!-- Included URDFs -->
+  <xacro:include filename="$(find neo_description)/urdf/common/util_defs.xacro"/>
+  <xacro:include filename="$(find neo_description)/urdf/common/materials.xml"/>
+
+  <!-- //////////////////////////////////////////////////////////////////// -->
+  <!-- Geometric properties of the platform and sensors -->
+  <!-- //////////////////////////////////////////////////////////////////// -->
+  <!-- Base -->
+  <xacro:property name="base_size_x" value="0.735"/>
+  <xacro:property name="base_size_y" value="0.717"/>
+  <xacro:property name="base_size_z" value="0.411"/>
+  <xacro:property name="base_offset_z" value="0.075"/>
+  <xacro:property name="base_mass" value="170.0"/>
+  <!--
+     Place the center of mass somewhere below the center of the base
+     because of the heavy batteries. Note: just a rough guess. Somebody
+     has to measure and enter correct values.
+     -->
+  <xacro:property name="base_cg_x" value="0"/>
+  <xacro:property name="base_cg_y" value="0"/>
+  <xacro:property name="base_cg_z" value="0.15"/>
+
+  <!-- //////////////////////////////////////////////////////////////////// -->
+  <!-- Wheels -->
+  <xacro:property name="wheel_offset_x" value="0"/>
+  <xacro:property name="wheel_offset_y" value="0.3255"/>
+  <xacro:property name="wheel_radius" value="0.075"/>
+  <xacro:property name="wheel_width" value="0.035"/>
+  <xacro:property name="wheel_mass" value="3.0"/>
+
+  <!-- //////////////////////////////////////////////////////////////////// -->
+  <!-- Macro to define a wheel. The origin is set to the connection point 
+       to the axis/base. Reflect is either -1 or one for left or right. -->
+  <xacro:macro name="neo_mp655_wheel" params="suffix parent reflect *origin">
+    <joint name="${suffix}_joint" type="continuous">
+      <xacro:insert_block name="origin"/>
+      <parent link="${parent}_link"/>
+      <child link="${suffix}_link"/>
+    </joint>
+
+    <link name="${suffix}_link">
+      <inertial>
+        <mass value="${wheel_mass}"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <cylinder_inertia_def radius="${wheel_radius}" length="${wheel_width}" mass="${wheel_mass}"/>
+      </inertial>
+
+      <collision>
+        <origin xyz="0 0 0" rpy="0 ${0.5 * reflect * M_PI} 0"/>
+        <geometry>
+          <cylinder radius="${1.00 * wheel_radius}" length="${wheel_width}"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <gazebo reference="${suffix}_link">
+      <material value="Gazebo/Black"/>
+      <mu1>10.0</mu1>
+      <mu2>10.0</mu2>
+      <kp>500000.0</kp>
+      <kd>10.0</kd>
+      <minDepth>0.001</minDepth>
+      <maxVel>0.1</maxVel>
+      <fdir1>1 0 0</fdir1>
+    </gazebo>
+
+  </xacro:macro>
+
+
+  <!-- //////////////////////////////////////////////////////////////////// -->
+  <!-- Caster wheel -->
+  <xacro:macro name="caster_wheel" params="suffix parent *origin">
+    <joint name="${suffix}_joint" type="fixed">
+      <xacro:insert_block name="origin"/>
+      <parent link="${parent}_link"/>
+      <child link="${suffix}_link"/>
+    </joint>
+
+    <link name="${suffix}_link">
+      <inertial>
+        <mass value="0.5"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001" />
+      </inertial>
+
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <sphere radius="${wheel_radius * 1.00}"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <gazebo reference="${suffix}_link">
+      <material value="Gazebo/Black"/>
+      <mu1>0.01</mu1>
+      <mu2>0.01</mu2>
+      <kp>1000000.0</kp>
+      <kd>100.0</kd>
+      <minDepth>0.001</minDepth>      <!-- Minimum allowable depth before contact correction impulse is applied -->
+      <maxVel>1.0</maxVel>
+      <!-- <slip1></slip1> -->
+      <!-- <slip2></slip2> -->
+      <!-- <turnGravityOff>false</turnGravityOff> -->
+    </gazebo>
+  </xacro:macro>
+
+
+  <!-- //////////////////////////////////////////////////////////////////// -->
+  <!-- Macro to define a ultrasonic sensor, implemented as a fixed link -->
+  <xacro:macro name="ultrasonic_sensor" params="parent type location *origin">
+    <joint name="$ultrasonic_sensor_${type}-${location}_joint" type="fixed">
+      <xacro:insert_block name="origin"/>
+      <parent link="${parent}_link"/>
+      <child link="ultrasonic_sensor_${type}-${location}_link"/>
+      <!-- <axis xyz="0 ${- reflect} 0"/> -->
+    </joint>
+    <link name="ultrasonic_sensor_${type}-${location}_link"></link>
+  </xacro:macro>
+
+
+  <!-- //////////////////////////////////////////////////////////////////// -->
+  <!-- Macro to define the platform base -->
+  <xacro:macro name="neobotix_base" params="name">
+    <link name="${name}_link">
+      <inertial>
+        <mass value="${base_mass}" />
+        <origin xyz="${base_cg_x} ${base_cg_y} ${base_cg_z}" rpy="0 0 0"/>
+        <!-- The inertia matrix of the base is wrong. The specification is with
+             respect to the origin of the base. It's currently not worth it for me
+             to do some exact calculations -->
+        <cuboid_inertia_def length="${0.25 * base_size_x}" width="${base_size_y}" height="${0.25 * base_size_z}" mass="${base_mass}"/>
+      </inertial>
+
+      <visual>
+        <origin xyz="0 0 ${base_offset_z}" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://neo_description/meshes/neo_mp655/neobotix_mp655.dae" scale="0.1 0.1 0.1"/>
+        </geometry>
+        <material name="Silver"/>
+      </visual>
+
+      <collision>
+        <origin xyz="0 0 ${base_offset_z + 0.5 * base_size_z}" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.68 0.6 0.42"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <gazebo reference="${name}_link">
+      <material value="kimp.material"/>
+    </gazebo>
+
+    <!-- base_footprint is a fictitious link(frame) that is on the ground 
+         right below base_link origin, navigation stack depends on this frame -->
+    <link name="${name}_footprint"/>
+
+    <joint name="${name}_footprint_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <child link="${name}_link" />
+      <parent link="${name}_footprint"/>
+    </joint>
+
+    <!-- //////////////////////////////////////////////////////////////////// -->
+    <!-- Define wheels inside the base macro -->
+    <!-- Left wheel -->
+    <neo_mp655_wheel parent="${name}" suffix="left_wheel" reflect="-1">
+      <origin xyz="${wheel_offset_x} ${wheel_offset_y} ${wheel_radius}" rpy="0 0 ${M_PI/2}"/>
+    </neo_mp655_wheel>
+
+    <!-- Right wheel -->
+    <neo_mp655_wheel parent="${name}" suffix="right_wheel" reflect="1">
+      <origin xyz="${wheel_offset_x} ${-wheel_offset_y} ${wheel_radius}" rpy="0 0 ${M_PI/2}"/>
+    </neo_mp655_wheel>
+
+    <!-- Caster wheels -->
+    <caster_wheel parent="${name}" suffix="front_right_caster">
+      <origin xyz="0.28 -0.24 ${wheel_radius}" rpy="0 0 0"/>
+    </caster_wheel>
+
+    <caster_wheel parent="${name}" suffix="front_left_caster">
+      <origin xyz="0.28 0.24 ${wheel_radius}" rpy="0 0 0"/>
+    </caster_wheel>
+
+    <caster_wheel parent="${name}" suffix="rear_caster">
+      <origin xyz="-0.28 0 ${wheel_radius}" rpy="0 0 0"/>
+    </caster_wheel>
+
+
+    <!-- //////////////////////////////////////////////////////////////////// -->
+    <!-- Five ultrasonic sensors -->
+    <!-- 
+    <ultrasonic_sensor parent="${name}" type="US" location="frontR">
+       <origin xyz="0.357 -0.160 0.377" rpy="0 -0.52 0"/>
+    </ultrasonic_sensor>
+    <ultrasonic_sensor parent="${name}" type="US" location="frontM">
+       <origin xyz="0.357 0 0.377" rpy="0 -0.52 0"/>
+    </ultrasonic_sensor>
+    <ultrasonic_sensor parent="${name}" type="US" location="frontL">
+       <origin xyz="0.357 0.160 0.377" rpy="0 -0.52 0"/>
+    </ultrasonic_sensor>
+    <ultrasonic_sensor parent="${name}" type="US" location="rearR">
+       <origin xyz="-0.357 -0.115 0.374" rpy="${M_PI} -2.62 0"/>
+    </ultrasonic_sensor>
+    <ultrasonic_sensor parent="${name}" type="US" location="rearL">
+       <origin xyz="-0.357 0.115 0.374" rpy="${M_PI} -2.62 0"/>
+    </ultrasonic_sensor> 
+    -->
+
+
+    <gazebo>
+      <plugin name="neobotix_controller" filename="libgazebo_ros_diff_drive.so">
+        <commandTopic>cmd_vel</commandTopic>
+        <odometryTopic>odom</odometryTopic>
+        <odometryFrame>odom</odometryFrame>
+        <odometrySource>world</odometrySource>
+        <publishOdomTF>true</publishOdomTF>
+        <robotBaseFrame>base_footprint</robotBaseFrame>        <!-- base_link -->
+        <publishWheelTF>false</publishWheelTF>
+        <publishTf>true</publishTf>
+        <publishWheelJointState>true</publishWheelJointState>
+        <legacyMode>false</legacyMode>
+        <updateRate>100</updateRate>
+        <leftJoint>left_wheel_joint</leftJoint>
+        <rightJoint>right_wheel_joint</rightJoint>
+        <wheelSeparation>0.651</wheelSeparation>
+        <wheelDiameter>0.15</wheelDiameter>
+        <wheelAcceleration>1</wheelAcceleration>
+        <wheelTorque>5</wheelTorque>
+        <rosDebugLevel>na</rosDebugLevel>
+      </plugin>
+    </gazebo>
+
+
+    <!-- CONTROLLERS (as seen in erratic_base.xacro -->
+    <!-- <gazebo> -->
+    <!-- <controller:diffdrive_plugin name="differential_drive_controller" plugin="libdiffdrive_plugin.so">
+        <alwaysOn>true</alwaysOn>
+        <update>100</update>
+        <updateRate>100.0</updateRate>
+        <leftJoint>right_wheel_joint</leftJoint>
+        <rightJoint>left_wheel_joint</rightJoint>
+        <wheelSeparation>0.651</wheelSeparation>
+        <wheelDiameter>0.15</wheelDiameter>
+        <torque>5</torque>
+        <interface:position name="position_iface_0"/>
+        <topicName>cmd_vel</topicName>
+      </controller:diffdrive_plugin> -->
+
+    <!-- <controller:gazebo_ros_p3d name="p3d_base_controller" plugin="libgazebo_ros_p3d.so">
+        <alwaysOn>true</alwaysOn>
+        <updateRate>100.0</updateRate>
+        <bodyName>base_link</bodyName>
+        <topicName>base_pose_ground_truth</topicName>
+        <gaussianNoise>0.01</gaussianNoise>
+        <frameName>map</frameName>
+        <xyzOffsets>0 0 0</xyzOffsets>
+        <rpyOffsets>0 0 0</rpyOffsets>
+        <interface:position name="p3d_base_position"/>
+      </controller:gazebo_ros_p3d> -->
+
+    <!--canonicalBody>base_footprint</canonicalBody-->
+
+
+    <!-- this publishes empty joint_states due to no transmission, but
+                triggering robot_state_publisher to publish tf between fixed joints in erratic,
+                (e.g. base_laser_link for the base_scan frame) -->
+    <!--                 
+      <controller:gazebo_ros_controller_manager name="gazebo_ros_controller_manager" plugin="libgazebo_ros_controller_manager.so">
+        <alwaysOn>true</alwaysOn>
+        <updateRate>100.0</updateRate>
+        <interface:audio name="gazebo_ros_controller_manager_dummy_iface" />
+      </controller:gazebo_ros_controller_manager>
+ -->
+    <!-- </gazebo> -->
+
+  </xacro:macro>
+
+</robot>

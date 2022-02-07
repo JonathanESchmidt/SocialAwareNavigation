@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Transformation from Neobotix base to LWR base -->
+  <xacro:property name="cal_base_to_lwr_arm_xyz" value="0.236 0.190 0.831" />
+  <xacro:property name="cal_base_to_lwr_arm_rpy" value="0 0 -1.570796327" />
+
+  <!-- Transformation from LWR base to Kinect (faily accurate) -->
+  <xacro:property name="kinect_parent_name" value="calib_lwr_arm_base_link"/>
+  <xacro:property name="cal_kinect_x"       value="0.257"/>
+  <xacro:property name="cal_kinect_y"       value="-0.064" />
+  <xacro:property name="cal_kinect_z"       value="0.145" />
+  <xacro:property name="cal_kinect_roll"    value="0" />
+  <xacro:property name="cal_kinect_pitch"   value="0" />
+  <xacro:property name="cal_kinect_yaw"     value="1.570796327" />
+  
+  
+  <!-- Transformation from chassis to Kinect on pole (faily accurate)
+  <xacro:property name="kinect_parent_name" value="chassis"/>
+  <xacro:property name="cal_kinect_x"       value="-0.23"/>
+  <xacro:property name="cal_kinect_y"       value="-0.260" />
+  <xacro:property name="cal_kinect_z"       value="${1.485-0.055}" />
+  <xacro:property name="cal_kinect_roll"    value="0" />
+  <xacro:property name="cal_kinect_pitch"   value="0.48" />
+  <xacro:property name="cal_kinect_yaw"     value="0" /> -->
+
+  <!-- Transformation from LWR endeffector to gripper connector plate -->
+  <!-- schunk gripper -->
+  <xacro:property name="cal_lwr_to_gripper_xyz" value="0 0 0" />
+  <xacro:property name="cal_lwr_to_gripper_rpy" value="3.1415926 -1.570796327 0"  /> 
+
+  <!-- box gripper 
+  <xacro:property name="cal_lwr_to_gripper_xyz" value="0 0 0.095" />
+  <xacro:property name="cal_lwr_to_gripper_rpy" value="0 0 1.570796327" /> 
+  -->
+
+  <!-- Size of the chassis (just a box) -->
+  <xacro:property name="chassis_size_x" value="0.65"/>
+  <xacro:property name="chassis_size_y" value="0.58"/>
+  <xacro:property name="chassis_size_z" value="0.42"/>
+
+  <!-- Laser scanner parameters -->
+  <xacro:property name="laser_front_x"      value="0.377"/>
+  <xacro:property name="laser_front_y"      value="-0.341"/>
+  <xacro:property name="laser_front_z"      value="0.160"/>
+  <xacro:property name="laser_front_roll"   value="0.00"/>
+  <xacro:property name="laser_front_pitch"  value="0.00"/>
+  <xacro:property name="laser_front_yaw"    value="5.497787144"/>
+  <xacro:property name="laser_front_min_angle" value="-2.35619449"/> <!-- 135 degrees -->
+  <xacro:property name="laser_front_max_angle" value="2.35619449"/>
+
+  <xacro:property name="laser_back_x"       value="-0.377"/>
+  <xacro:property name="laser_back_y"       value="0.341"/>
+  <xacro:property name="laser_back_z"       value="0.160"/>
+  <xacro:property name="laser_back_roll"    value="0.00"/>
+  <xacro:property name="laser_back_pitch"   value="0.00"/>
+  <xacro:property name="laser_back_yaw"     value="2.35619449"/>
+  <xacro:property name="laser_back_min_angle" value="-2.35619449"/>
+  <xacro:property name="laser_back_max_angle" value="2.35619449"/>
+ 
+</robot>

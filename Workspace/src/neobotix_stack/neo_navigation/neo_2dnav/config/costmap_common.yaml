@@ -1,0 +1,18 @@
+# Common settings for costmaps (May be overwritten in specific global and local costmap files)
+
+
+# Robot Footprint Parameters
+#footprint: [[0.55,0.5],[0.55,-0.5],[-0.55,-0.5],[-0.55,0.5]]	#Square robot
+#footprint_padding: 0.01
+robot_radius: 0.55    # Circular robot
+# inflation_radius: 0.35
+
+
+# Layer Definitions
+obstacle_layer:
+  obstacle_range: 7     # The default maximum distance from the robot at which an obstacle will be inserted
+                          # into the cost map in meters. This can be over-ridden on a per-sensor basis. Default: 2.5
+  raytrace_range: 4.0   # The default range in meters at which to raytrace out obstacles from the
+                          # map using sensor data. This can be over-ridden on a per-sensor basis. Default: 3.0
+
+
