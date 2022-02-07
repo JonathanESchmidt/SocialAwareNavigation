@@ -1,12 +1,10 @@
 # SocialAwareNavigation
 
 ## Authors:
-Alexandru Smau: **asmau21@student.aau.dk**
-Christian Rønnest: **cwra18@student.aau.dk**
-Jonathan Schmidt: **jschmi17@student.aau.dk**
-Tristan Schwörer: **tschwo21@student.aau.dk**
-
-
+Alexandru Smau: **asmau21@student.aau.dk** \
+Christian Rønnest: **cwra18@student.aau.dk** \
+Jonathan Schmidt: **jschmi17@student.aau.dk** \
+Tristan Schwörer: **tschwo21@student.aau.dk** 
 
 ## The Docker Integration of this repository is forked from https://github.com/nebohq/mac-ros
 
