@@ -7,6 +7,10 @@
   <arg name="sim" default="false"/>
   <arg name="debug" default="false"/>
 
+   <!-- Neobotix -->
+  <include file="$(find neo_bringup)/launch/bringup_mp_655_remote.launch">
+  </include>
+
   <!-- Arguments -->
   <arg name="open_rviz" default="true"/>
   <arg name="enable_teleop" default="true"/>
