@@ -1,3 +1,0 @@
-loop_rate: 20.0
-input_scans: ['laser_front/scan','laser_back/scan']
-

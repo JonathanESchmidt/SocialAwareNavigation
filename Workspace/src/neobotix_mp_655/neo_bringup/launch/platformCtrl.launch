@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="sendTF" default="true"/>
+
+  <param name="platformctrl_node/sendTransform" value="false"/>
+  <param if="$(arg sendTF)" name="platformctrl_node/sendTransform" value="true"/>
+
+  <rosparam command="load" ns="platformctrl_node" file="$(find neo_bringup)/config/platform_ctrl.yaml"/>
+
+  <node pkg="neo_platformctrl_diff" type="neo_platformctrl_diff_node" name="platformctrl_node" ns="platformctrl_node" respawn="false" output="screen"/>
+
+</launch>

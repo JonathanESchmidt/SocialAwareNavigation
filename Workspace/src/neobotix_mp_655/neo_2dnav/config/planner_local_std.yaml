@@ -1,0 +1,39 @@
+TrajectoryPlannerROS:
+  # Whether to use Dynamic Window Approach (DWA) or Trajectory Rollout
+  # DWA may be better and less computational expensive.
+  # NOTE: it looks like if DWA is used, that the robot will move much slower,
+  #  so the parameters below may have to be tuned
+  # DWA seems to perform much better than TR
+  dwa: true
+
+  # Acceleration
+  acc_lim_x: 0.3      # m/s^2, default: 2.5, 0.1 for dwa: false
+  acc_lim_y: 0.0      # m/s^2, default: 2.5
+  acc_lim_theta: 0.2  # rad/s^2, default: 3.2
+
+  # Forward velocity
+  max_vel_x: 0.2
+  min_vel_x: 0.05
+
+  # Rotational velocity
+  max_vel_theta: 0.30
+  min_vel_theta: -0.30 #0.05
+  # max_rotational_vel: 0.2
+  min_in_place_vel_theta: 0.10
+
+  # Determines whether velocity commands are generated for a holonomic or non-holonomic robot
+  holonomic_robot: false
+
+  # Forward simulation parameters
+  sim_time: 2.0
+  vx_samples: 15      # default: 3
+  vtheta_samples: 20  # default 20.0
+  controller_frequency: 25
+
+  # Goal tolerance parameters
+  yaw_goal_tolerance: 0.10 # about 3.5 degrees
+  xy_goal_tolerance: 0.15 # in m
+
+
+
+  meter_scoring: true

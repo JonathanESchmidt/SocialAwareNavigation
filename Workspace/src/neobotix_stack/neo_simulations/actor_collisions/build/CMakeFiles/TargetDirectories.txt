@@ -1,3 +1,0 @@
-/home/ros/jam/plugins/actor_collisions/build/CMakeFiles/rebuild_cache.dir
-/home/ros/jam/plugins/actor_collisions/build/CMakeFiles/ActorCollisionsPlugin.dir
-/home/ros/jam/plugins/actor_collisions/build/CMakeFiles/edit_cache.dir

@@ -1,7 +1,0 @@
-image: /home/ros/neo_ws/src/neobotix_stack/neo_navigation/neo_bringup/maps/map_narrowHallway3.2.pgm
-resolution: 0.050000
-origin: [-17.800000, -5.000000, 0.000000]
-negate: 0
-occupied_thresh: 0.65
-free_thresh: 0.196
-

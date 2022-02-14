@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- Robot platform -->
+  <!-- Scan unifier. Combine the two laser scanners into one laser scan data-->
+  <include file="$(find neo_bringup)/launch/unify_scans.launch"/>
+
+  <!-- Robot State Publisher -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher">
+    <param name="publish_frequency" type="double" value="50.0"/>
+  </node>
+
+</launch>

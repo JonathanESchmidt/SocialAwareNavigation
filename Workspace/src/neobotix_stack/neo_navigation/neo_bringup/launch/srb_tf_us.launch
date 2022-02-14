@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<launch>
-	<rosparam command="load" ns="srbus_tf" file="$(find neo_base_mp_500)/ros/launch/serrelay/us/$(env ROBOT).yaml"/>
-	<node pkg="cob_relayboard" type="neo_srb_us_tf_node" ns="srbus_tf" name="srb_us_tf_node" respawn="false" output="screen"/>
-</launch>
