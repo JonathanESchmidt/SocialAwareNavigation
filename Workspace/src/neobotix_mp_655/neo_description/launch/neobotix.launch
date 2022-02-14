@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- Launch rviz -->
+  <arg name="test" default="False"/>
+  <!-- Select platform configuration i.e. where the laser scanners are placed -->
+  <arg name="platform_configuration" default="neo-aal" doc="platform configuration type [neo-aal, neo-cph]"/>
+
+  <param name="use_gui" value="$(arg test)" />
+
+  <!-- Load XACRO model -->
+  <param name="robot_description" command="$(find xacro)/xacro '$(find neo_description)/robots/neobotix_base.urdf.xacro' platform_configuration:=$(arg platform_configuration)"/>
+
+  <!-- Joint state publisher -->
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+  <!-- <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" /> -->
+
+  <!-- Robot state publisher -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+  <!-- Nodes that will only be run when testing -->
+  <group if="$(arg test)">
+    <!-- Start RViz to visualize the Neobotix platform -->
+    <node name="rviz" pkg="rviz" type="rviz" required="true" args="-d $(find neo_description)/rviz/neobotix.rviz"/>
+  </group>
+</launch>

@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- Arguments -->
+  <arg name="open_rviz" default="true"/>
+  <arg name="enable_logitech_teleop" default="false"/>
+  <arg name="slam_method" default="gmapping" doc="slam type [gmapping, cartographer, hector, karto, frontier_exploration]"/>
+
+
+  <!-- Neobotix -->
+  <include file="$(find neo_bringup)/launch/bringup_mp_655_remote.launch">
+  </include>
+
+
+  <!-- SLAM: Gmapping, Cartographer, Hector, Karto, Frontier_exploration, RTAB-Map -->
+  <remap from="/scan" to="/laser_unified/scan"/>
+  <include file="$(find neo_2dnav)/launch/neo_$(arg slam_method).launch">
+    <!-- <arg name="model" value="$(arg model)"/> -->
+    <!-- <arg name="configuration_basename" value="$(arg configuration_basename)"/> -->
+  </include>
+
+
+  <!-- Run move_base -->
+  <!-- Using move_base in the mapping process, lets you set navigation goals.
+       In this way, the robot can move automatically while mapping. This can
+       however be dangerous as the robot can move erratically around the area. -->
+  <!-- <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+    <rosparam file="$(find neo_2dnav)/config/costmap_common.yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find neo_2dnav)/config/costmap_common.yaml" command="load" ns="local_costmap" />
+    <rosparam file="$(find neo_2dnav)/config/costmap_local.yaml" command="load" />
+    <rosparam file="$(find neo_2dnav)/config/costmap_global.yaml" command="load" />
+    <rosparam file="$(find neo_2dnav)/config/planner_local_std.yaml" command="load" />
+  </node> -->
+
+  <!-- Teleoperation with Logitech joypad -->
+  <!-- <group if="$(arg enable_logitech_teleop)">
+    <include file="$(find neo_teleop)/launch/teleop.launch" />
+  </group> -->
+  <!-- Else use keyboard teleop -->
+  <!-- <group unless="$(arg enable_logitech_teleop)">
+    <include file="$(find neo_teleop)/launch/teleop_keyboard.launch" />
+  </group> -->
+
+
+  <!-- RViz -->
+  <group if="$(arg open_rviz)">
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find neo_2dnav)/rviz/neo_gmapping.rviz"/>
+  </group>
+
+</launch>

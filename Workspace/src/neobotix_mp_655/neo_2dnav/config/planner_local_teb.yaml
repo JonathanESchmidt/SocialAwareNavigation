@@ -1,0 +1,92 @@
+TebLocalPlannerROS:
+ # The underlying method called Timed Elastic Band locally optimizes the
+ # robot's trajectory with respect to trajectory execution time, separation
+ # from obstacles and compliance with kinodynamic constraints at runtime.
+ # See all parameters and default values here:
+ # http://wiki.ros.org/teb_local_planner
+
+ odom_topic: odom
+ map_frame: map
+
+ # Trajectory Configuration
+ teb_autosize: True
+ dt_ref: 0.3                # Desired temporal resolution of the trajectory (the trajectory is
+                            # not fixed to dt_ref since the temporal resolution is part of the
+                            # optimization, but the trajectory will be resized between iterations
+                            # if dt_ref +-dt_hysteresis is violated. Default: 0.3.
+ dt_hysteresis: 0.1
+ global_plan_overwrite_orientation: True
+ max_global_plan_lookahead_dist: 3.0
+ feasibility_check_no_poses: 5
+
+ # Robot
+ max_vel_x: 0.8                             # Maximum translational velocity of the robot in meters/sec. Default: 0.4.
+ max_vel_x_backwards: 0.2                   # Maximum absolute translational velocity of the robot while driving
+                                            # backwards in meters/sec. See optimization parameter
+                                            # weight_kinematics_forward_drive. Default: 0.2.
+ max_vel_theta: 0.2
+ acc_lim_x: 0.15
+ acc_lim_theta: 0.2
+ min_turning_radius: 0.0
+ footprint_model:           # types: "point", "circular", "two_circles", "line", "polygon"
+   type: "circular"
+   radius: 0.4              # for type "circular"
+   line_start: [-0.3, 0.0]  # for type "line"
+   line_end: [0.3, 0.0]     # for type "line"
+   front_offset: 0.2        # for type "two_circles"
+   front_radius: 0.2        # for type "two_circles"
+   rear_offset: 0.2         # for type "two_circles"
+   rear_radius: 0.2         # for type "two_circles"
+   vertices: [ [0.25, -0.05], [0.18, -0.05], [0.18, -0.18], [-0.19, -0.18], [-0.25, 0], [-0.19, 0.18], [0.18, 0.18], [0.18, 0.05], [0.25, 0.05] ] # for type "polygon"
+
+ # Goal Tolerance
+ xy_goal_tolerance: 0.2                     # Allowed final euclidean distance to the goal position in meters. Default: 0.2.
+ yaw_goal_tolerance: 0.1                    # Allowed final orientation error in radians. Default: 0.2.
+ free_goal_vel: False                       # Remove the goal velocity constraint such that the robot can arrive at the goal with maximum speed. Default: false.
+
+ # Obstacles
+ min_obstacle_dist: 0.1                     # Minimum desired separation from obstacles. Default: 0.5
+ inflation_dist: 0.6                        # Buffer zone around obstacles with non-zero penalty costs (should be larger than min_obstacle_dist in order to take effect). Also refer to the weight weight_inflation. Default: 0.6
+ include_dynamic_obstacles: False           # REQUIRES ADDITIONAL IMPLEMENTATION.
+                                            # If this parameter is set to true, the motion of obstacles with non-zero
+                                            # velocity (provided via user-supplied obstacles on topic ~/obstacles or
+                                            # obtained from the costmap_converter) is predicted and considered during
+                                            # optimization via a constant velocity model. Default: false.
+                                            # costmap_converter: http://wiki.ros.org/costmap_converter
+ include_costmap_obstacles: True
+ costmap_obstacles_behind_robot_dist: 1.0
+ obstacle_poses_affected: 30
+ costmap_converter_plugin: ""
+ costmap_converter_spin_thread: True
+ costmap_converter_rate: 5
+
+ # Optimization
+ no_inner_iterations: 5
+ no_outer_iterations: 4
+ optimization_activate: True
+ optimization_verbose: False
+ penalty_epsilon: 0.1
+ weight_max_vel_x: 2
+ weight_max_vel_theta: 1
+ weight_acc_lim_x: 1
+ weight_acc_lim_theta: 1
+ weight_kinematics_nh: 1000
+ weight_kinematics_forward_drive: 1
+ weight_kinematics_turning_radius: 1
+ weight_optimaltime: 1
+ weight_obstacle: 50
+ weight_dynamic_obstacle: 10 # not in use yet
+ alternative_time_cost: False # not in use yet
+
+ # Homotopy Class Planner
+ enable_homotopy_class_planning: True
+ enable_multithreading: True
+ simple_exploration: False
+ max_number_classes: 4
+ roadmap_graph_no_samples: 15
+ roadmap_graph_area_width: 5
+ h_signature_prescaler: 0.5
+ h_signature_threshold: 0.1
+ obstacle_keypoint_offset: 0.1
+ obstacle_heading_threshold: 0.45
+ visualize_hc_graph: False

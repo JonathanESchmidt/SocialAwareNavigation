@@ -1,0 +1,24 @@
+# Sensor management parameters
+observation_sources: laser_scanner              # A list of observation source names separated by spaces. This
+                                                # defines each of the <source_name> namespaces defined below.
+
+# Each source_name in 'observation_sources' defines a namespace in which parameters can be set:
+laser_scanner: {topic: /laser_unified/scan,     # The topic on which sensor data comes in for this source. Defaults to the name of the source.
+                sensor_frame: scan_combined,    # The frame of the origin of the sensor. Leave empty to attempt to read the frame from sensor data.
+                expected_update_rate: 9.0,      # How often to expect a reading from a sensor in seconds. A value of 0.0 will
+                                                # allow infinite time between readings. This parameter is used as a failsafe
+                                                # to keep the navigation stack from commanding the robot when a sensor has failed.
+                                                # It should be set to a value that is slightly more permissive than the actual
+                                                # rate of the sensor. For example, if we expect a scan from a laser every
+                                                # 0.05 seconds we might set this parameter to be 0.1 seconds to give a generous
+                                                # buffer and account for some amount of system latency.
+                data_type: LaserScan,           # The data type associated with the topic, right now only "PointCloud", "PointCloud2",
+                                                # and "LaserScan" are supported.
+                clearing: true,                 # Whether or not this observation should be used to clear out freespace.
+                marking: true,                  # Whether or not this observation should be used to mark obstacles.
+                }
+
+#obstacles:
+#    observation_sources: laser_scanner
+#    laser_scanner: {sensor_frame: /scan_combined, data_type: LaserScan, topic: /scan_unified/scan, marking: true, clearing: true, expected_update_rate: 9.0}
+

@@ -52,6 +52,7 @@ RUN apt-get -y update && apt-get install -y\
     ros-melodic-leg-detector \
     ros-melodic-slam-karto \
     ros-melodic-people-velocity-tracker \
+    ros-melodic-teb-local-planner \
     libnetpbm10-dev
 
 RUN mkdir -p /root/robot/src

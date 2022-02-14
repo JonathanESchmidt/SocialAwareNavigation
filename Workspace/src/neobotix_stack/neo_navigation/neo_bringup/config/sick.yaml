@@ -1,9 +1,0 @@
-port: /dev/ttyUSB1
-baud: 500000
-inverted: true
-frame_id: /sensor_laser-frontR_link
-scan_id: 8
-start_scan: 0
-stop_scan: 541
-translation: [0.377, -0.341, 0.]
-orientation: [0., 0., 5.498]
