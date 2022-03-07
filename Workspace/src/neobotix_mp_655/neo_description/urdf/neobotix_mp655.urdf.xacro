@@ -133,7 +133,7 @@
         <!-- The inertia matrix of the base is wrong. The specification is with
              respect to the origin of the base. It's currently not worth it for me
              to do some exact calculations -->
-        <cuboid_inertia_def length="${0.25 * base_size_x}" width="${base_size_y}" height="${0.25 * base_size_z}" mass="${base_mass}"/>
+        <xacro:cuboid_inertia_def length="${0.25 * base_size_x}" width="${base_size_y}" height="${0.25 * base_size_z}" mass="${base_mass}"/>
       </inertial>
 
       <visual>
