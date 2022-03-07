@@ -46,7 +46,7 @@
       <inertial>
         <mass value="${wheel_mass}"/>
         <origin xyz="0 0 0" rpy="0 0 0"/>
-        <cylinder_inertia_def radius="${wheel_radius}" length="${wheel_width}" mass="${wheel_mass}"/>
+        <xacro:cylinder_inertia_def radius="${wheel_radius}" length="${wheel_width}" mass="${wheel_mass}"/>
       </inertial>
 
       <collision>
@@ -169,27 +169,27 @@
     <!-- //////////////////////////////////////////////////////////////////// -->
     <!-- Define wheels inside the base macro -->
     <!-- Left wheel -->
-    <neo_mp655_wheel parent="${name}" suffix="left_wheel" reflect="-1">
+    <xacro:neo_mp655_wheel parent="${name}" suffix="left_wheel" reflect="-1">
       <origin xyz="${wheel_offset_x} ${wheel_offset_y} ${wheel_radius}" rpy="0 0 ${M_PI/2}"/>
-    </neo_mp655_wheel>
+    </xacro:neo_mp655_wheel>
 
     <!-- Right wheel -->
-    <neo_mp655_wheel parent="${name}" suffix="right_wheel" reflect="1">
+    <xacro:neo_mp655_wheel parent="${name}" suffix="right_wheel" reflect="1">
       <origin xyz="${wheel_offset_x} ${-wheel_offset_y} ${wheel_radius}" rpy="0 0 ${M_PI/2}"/>
-    </neo_mp655_wheel>
+    </xacro:neo_mp655_wheel>
 
     <!-- Caster wheels -->
-    <caster_wheel parent="${name}" suffix="front_right_caster">
+    <xacro:caster_wheel parent="${name}" suffix="front_right_caster">
       <origin xyz="0.28 -0.24 ${wheel_radius}" rpy="0 0 0"/>
-    </caster_wheel>
+    </xacro:caster_wheel>
 
-    <caster_wheel parent="${name}" suffix="front_left_caster">
+    <xacro:caster_wheel parent="${name}" suffix="front_left_caster">
       <origin xyz="0.28 0.24 ${wheel_radius}" rpy="0 0 0"/>
-    </caster_wheel>
+    </xacro:caster_wheel>
 
-    <caster_wheel parent="${name}" suffix="rear_caster">
+    <xacro:caster_wheel parent="${name}" suffix="rear_caster">
       <origin xyz="-0.28 0 ${wheel_radius}" rpy="0 0 0"/>
-    </caster_wheel>
+    </xacro:caster_wheel>
 
 
     <!-- //////////////////////////////////////////////////////////////////// -->
