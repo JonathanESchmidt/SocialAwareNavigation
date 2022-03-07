@@ -10,20 +10,19 @@
 
   <!-- Load parameters -->
   <xacro:include filename="$(find neo_description)/calibration/$(arg platform_configuration)_cal.xacro"/>
-
-
+  
   <!-- Spawn the base -->
-  <neobotix_base name="base"/>
+  <xacro:neobotix_base name="base"/>
 
   <!-- Spawn the laser scanners -->
-  <sick_s300_laser_v0 name="laserfront" parent="base" ros_topic="laser_front/scan" update_rate="5" min_angle="${laser_front_min_angle}" max_angle="${laser_front_max_angle}" >
+  <xacro:sick_s300_laser_v0 name="laserfront" parent="base" ros_topic="laser_front/scan" update_rate="5" min_angle="${laser_front_min_angle}" max_angle="${laser_front_max_angle}" >
    <origin xyz="${laser_front_x} ${laser_front_y} ${laser_front_z}"
            rpy="${laser_front_roll} ${laser_front_pitch} ${laser_front_yaw}"/>
-  </sick_s300_laser_v0>
+  </xacro:sick_s300_laser_v0>
   
-  <sick_s300_laser_v0 name="laserback" parent="base" ros_topic="laser_back/scan" update_rate="5" min_angle="${laser_back_min_angle}" max_angle="${laser_back_max_angle}" >
+  <xacro:sick_s300_laser_v0 name="laserback" parent="base" ros_topic="laser_back/scan" update_rate="5" min_angle="${laser_back_min_angle}" max_angle="${laser_back_max_angle}" >
    <origin xyz="${laser_back_x} ${laser_back_y} ${laser_back_z}"
            rpy="${laser_back_roll} ${laser_back_pitch} ${laser_back_yaw}"/>
-  </sick_s300_laser_v0>
+  </xacro:sick_s300_laser_v0>
 
 </robot>
