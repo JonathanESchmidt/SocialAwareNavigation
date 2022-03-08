@@ -1,3 +1,4 @@
+
 <?xml version='1.0'?>
 <sdf version='1.7'>
   <model name='Fib14'>
@@ -23,7 +24,7 @@
         <pose>0 0 0 0 -0 0</pose>
         <geometry>
           <mesh>
-            <uri>/home/jonathan/Repositories/ompt_course/workspace/src/omtp_lecture2/models/Fib14/meshes/fib14.dae</uri>
+            <uri>model://Fib14/meshes/fib14.dae</uri>
             <scale>1 1 1</scale>
           </mesh>
         </geometry>
@@ -44,9 +45,9 @@
         <pose>0 0 0 0 -0 0</pose>
         <geometry>
           <mesh>
-            <uri>/home/jonathan/Repositories/ompt_course/workspace/src/omtp_lecture2/models/Fib14/meshes/fib14.dae</uri>
+            <uri>model://Fib14/meshes/fib14.dae</uri>
             <scale>1 1 1</scale>
-          </mesh>model://
+          </mesh>
         </geometry>
         <surface>
           <friction>

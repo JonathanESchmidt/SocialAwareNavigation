@@ -1,12 +1,12 @@
 <launch>
   <!-- Select platform configuration i.e. where the laser scanners are placed -->
-  <arg name="platform_configuration" default="neo-aal" doc="platform configuration type [neo-aal, neo-cph]"/>
+  <arg name="platform_configuration" default="neo-cph" doc="platform configuration type [neo-aal, neo-cph]"/>
   <arg name="x_pos" default="0.0"/>
   <arg name="y_pos" default="-10.0"/>
   <arg name="z_pos" default="0.0"/>
 
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
-    <arg name="world_name" value="$(find neo_gazebo)/worlds/beer_factory.world"/>
+    <arg name="world_name" value="$(find neo_gazebo)/worlds/fib14.world"/>
     <arg name="paused" value="false"/>
     <arg name="use_sim_time" value="true"/>
     <arg name="gui" value="true"/>
