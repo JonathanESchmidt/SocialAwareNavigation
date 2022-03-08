@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<robot name="bots" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name = "bot" params = "id parent_link *origin">
+    <xacro:include filename="$(find omtp_support)/urdf/robot_pedestal/robot_pedestal.urdf.xacro"/>
+    <xacro:robot_pedestal_urdf pedestal_prefix="${id}_" pedestal_parent="${parent_link}" pedestal_height="0.95">
+      <origin xyz="0.5 1.0 0.0" rpy="0 0 0"/>
+    </xacro:robot_pedestal_urdf>
+
+  </xacro:macro>
+</robot>

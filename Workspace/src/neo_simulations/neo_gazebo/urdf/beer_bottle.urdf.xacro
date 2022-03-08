@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<robot name="bottle" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:macro name="beer_bottle_urdf" params="prefix beer_bottle_parent *origin">
+    <!-- link list -->
+    <link name="${prefix}_base_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://omtp_support/urdf/beer_bottle.dae" />
+          <scale>100 100 100</scale>
+        </geometry>
+      </visual>
+
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://omtp_support/urdf/beer_bottle.dae" />
+          <scale>100 100 100</scale>
+        </geometry>
+      </collision>
+
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <inertia ixx="93350" ixy="0" ixz="0"
+                 iyy="93350" iyz="0"
+                 izz="16360" />
+        <mass value="0.19" />
+      </inertial>
+    </link>
+        <!-- joint list -->
+    <joint name="${prefix}_joint_1" type="fixed">
+      <xacro:insert_block name="origin" />
+      <parent link="${beer_bottle_parent}" />
+      <child link="${prefix}_base_link" />
+    </joint>
+
+    <gazebo reference="${prefix}_base_link">
+      <material>Gazebo/Orange</material>
+      <mu1>0.95</mu1>
+      <mu2>0.4</mu2>
+      <gravity>true</gravity>
+    </gazebo>
+
+  </xacro:macro>
+
+</robot>

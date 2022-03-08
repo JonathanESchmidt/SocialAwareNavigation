@@ -1,0 +1,900 @@
+<?xml version="1.0"?>
+<sdf version='1.7'>
+  <world name='default'>
+    <light name='sun' type='directional'>
+      <cast_shadows>1</cast_shadows>
+      <pose>0 0 10 0 -0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.9</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <direction>-0.5 0.1 -0.9</direction>
+      <spot>
+        <inner_angle>0</inner_angle>
+        <outer_angle>0</outer_angle>
+        <falloff>0</falloff>
+      </spot>
+    </light>
+    <model name='ground_plane'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+          <surface>
+            <contact>
+              <collide_bitmask>65535</collide_bitmask>
+              <ode/>
+            </contact>
+            <friction>
+              <ode>
+                <mu>100</mu>
+                <mu2>50</mu2>
+              </ode>
+              <torsional>
+                <ode/>
+              </torsional>
+            </friction>
+            <bounce/>
+          </surface>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='visual'>
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Grey</name>
+            </script>
+          </material>
+        </visual>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+    </model>
+    <gravity>0 0 -9.8</gravity>
+    <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field>
+    <atmosphere type='adiabatic'/>
+    <physics type='ode'>
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
+    </physics>
+    <scene>
+      <ambient>0.4 0.4 0.4 1</ambient>
+      <background>0.7 0.7 0.7 1</background>
+      <shadows>1</shadows>
+    </scene>
+    <wind/>
+    <spherical_coordinates>
+      <surface_model>EARTH_WGS84</surface_model>
+      <latitude_deg>0</latitude_deg>
+      <longitude_deg>0</longitude_deg>
+      <elevation>0</elevation>
+      <heading_deg>0</heading_deg>
+    </spherical_coordinates>
+    <model name='Fib14'>
+      <link name='link_0'>
+        <inertial>
+          <mass>1</mass>
+          <inertia>
+            <ixx>0.166667</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.166667</iyy>
+            <iyz>0</iyz>
+            <izz>0.166667</izz>
+          </inertia>
+          <pose>0 0 0 0 -0 0</pose>
+        </inertial>
+        <pose>0 0 0 0 -0 0</pose>
+        <gravity>1</gravity>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <enable_wind>0</enable_wind>
+        <visual name='visual'>
+          <pose>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <uri>/home/smau/AAU_sw/SocialAwareNavigation/Workspace/src/neo_simulations/neo_gazebo/meshes/fib14/fib14.dae</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <material>
+            <lighting>1</lighting>
+            <shader type='pixel'/>
+            <mesh>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+            </mesh>
+          </material>
+          <transparency>0</transparency>
+          <cast_shadows>1</cast_shadows>
+        </visual>
+        <collision name='collision'>
+          <laser_retro>0</laser_retro>
+          <max_contacts>10</max_contacts>
+          <pose>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <uri>/home/smau/AAU_sw/SocialAwareNavigation/Workspace/src/neo_simulations/neo_gazebo/meshes/fib14/fib14.dae</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>1</mu>
+                <mu2>1</mu2>
+                <fdir1>0 0 0</fdir1>
+                <slip1>0</slip1>
+                <slip2>0</slip2>
+              </ode>
+              <torsional>
+                <coefficient>1</coefficient>
+                <patch_radius>0</patch_radius>
+                <surface_radius>0</surface_radius>
+                <use_patch_radius>1</use_patch_radius>
+                <ode>
+                  <slip>0</slip>
+                </ode>
+              </torsional>
+            </friction>
+            <bounce>
+              <restitution_coefficient>0</restitution_coefficient>
+              <threshold>1e+06</threshold>
+            </bounce>
+            <contact>
+              <collide_without_contact>0</collide_without_contact>
+              <collide_without_contact_bitmask>1</collide_without_contact_bitmask>
+              <collide_bitmask>1</collide_bitmask>
+              <ode>
+                <soft_cfm>0</soft_cfm>
+                <soft_erp>0.2</soft_erp>
+                <kp>1e+13</kp>
+                <kd>1</kd>
+                <max_vel>0.01</max_vel>
+                <min_depth>0</min_depth>
+              </ode>
+              <bullet>
+                <split_impulse>1</split_impulse>
+                <split_impulse_penetration_threshold>-0.01</split_impulse_penetration_threshold>
+                <soft_cfm>0</soft_cfm>
+                <soft_erp>0.2</soft_erp>
+                <kp>1e+13</kp>
+                <kd>1</kd>
+              </bullet>
+            </contact>
+          </surface>
+        </collision>
+      </link>
+      <static>1</static>
+      <allow_auto_disable>1</allow_auto_disable>
+      <pose>0.028191 -0.011819 0 0 -0 0</pose>
+    </model>
+    <model name='robot_pedestal'>
+      <link name='world_interface'>
+        <inertial>
+          <pose>0 0 0 0 -0 0</pose>
+          <mass>500</mass>
+          <inertia>
+            <ixx>0.001</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.001</iyy>
+            <iyz>0</iyz>
+            <izz>0.001</izz>
+          </inertia>
+        </inertial>
+        <collision name='world_interface_fixed_joint_lump__robot1pedestal_link_collision'>
+          <pose>0 0 0.475 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>0.3 0.3 0.95</size>
+            </box>
+          </geometry>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <friction>
+              <ode/>
+              <torsional>
+                <ode/>
+              </torsional>
+            </friction>
+            <bounce/>
+          </surface>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='world_interface_fixed_joint_lump__robot1pedestal_link_visual'>
+          <pose>0 0 0.475 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>0.3 0.3 0.95</size>
+            </box>
+          </geometry>
+          <material>
+            <script>
+              <name>Gazebo/Blue</name>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+            </script>
+          </material>
+        </visual>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <static>1</static>
+      <pose>0.70 1 0 0 -0 0</pose>
+    </model>
+    <model name='omtp'>
+      <joint name='world_interface_to_world' type='fixed'>
+        <pose relative_to='__model__'>0 0 0 0 -0 0</pose>
+        <parent>world</parent>
+        <child>world_interface</child>
+      </joint>
+      <static>1</static>
+      <link name='world_interface'>
+        <pose relative_to='world_interface_to_world'>0 0 0 0 -0 0</pose>
+        <inertial>
+          <pose>0.697015 -0.141294 0.004975 0 -0 0</pose>
+          <mass>1005</mass>
+          <inertia>
+            <ixx>1483.11</ixx>
+            <ixy>-310.776</ixy>
+            <ixz>4.98507</ixz>
+            <iyy>1112.21</iyy>
+            <iyz>1.29353</iyz>
+            <izz>2570.37</izz>
+          </inertia>
+        </inertial>
+        <collision name='world_interface_fixed_joint_lump__bin_1_base_link_collision'>
+          <pose>0.0 1.2 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/smau/AAU_sw/SocialAwareNavigation/Workspace/src/neo_simulations/neo_gazebo/meshes/bin/collision/bin_bottom.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='world_interface_fixed_joint_lump__bin_1_base_link_collision_1'>
+          <pose>0.0 1.2 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/smau/AAU_sw/SocialAwareNavigation/Workspace/src/neo_simulations/neo_gazebo/meshes/bin/collision/bin_sides.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='world_interface_fixed_joint_lump__bin_2_base_link_collision_2'>
+          <pose>0.0 0.4 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/smau/AAU_sw/SocialAwareNavigation/Workspace/src/neo_simulations/neo_gazebo/meshes/bin/collision/bin_bottom.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='world_interface_fixed_joint_lump__bin_2_base_link_collision_3'>
+          <pose>0.0 0.4 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/smau/AAU_sw/SocialAwareNavigation/Workspace/src/neo_simulations/neo_gazebo/meshes/bin/collision/bin_sides.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='world_interface_fixed_joint_lump__bin_3_base_link_collision_4'>
+          <pose>0.0 -0.4 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/smau/AAU_sw/SocialAwareNavigation/Workspace/src/neo_simulations/neo_gazebo/meshes/bin/collision/bin_bottom.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='world_interface_fixed_joint_lump__bin_3_base_link_collision_5'>
+          <pose>0.0 -0.4 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/smau/AAU_sw/SocialAwareNavigation/Workspace/src/neo_simulations/neo_gazebo/meshes/bin/collision/bin_sides.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='world_interface_fixed_joint_lump__bin_4_base_link_collision_6'>
+          <pose>0.0 -1.2 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/smau/AAU_sw/SocialAwareNavigation/Workspace/src/neo_simulations/neo_gazebo/meshes/bin/collision/bin_bottom.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='world_interface_fixed_joint_lump__bin_4_base_link_collision_7'>
+          <pose>0.0 -1.2 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/smau/AAU_sw/SocialAwareNavigation/Workspace/src/neo_simulations/neo_gazebo/meshes/bin/collision/bin_sides.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='world_interface_fixed_joint_lump__bin_5_base_link_collision_8'>
+          <pose>0.0 -2 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/smau/AAU_sw/SocialAwareNavigation/Workspace/src/neo_simulations/neo_gazebo/meshes/bin/collision/bin_bottom.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='world_interface_fixed_joint_lump__bin_5_base_link_collision_9'>
+          <pose>0.0 -2 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/smau/AAU_sw/SocialAwareNavigation/Workspace/src/neo_simulations/neo_gazebo/meshes/bin/collision/bin_sides.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='world_interface_fixed_joint_lump__festo_bypass1_festo_module_collision_10'>
+          <pose>1.5 1.8 0 0 -0 3.14159</pose>
+          <geometry>
+            <box>
+            <size>0.8 1.2 2</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='world_interface_fixed_joint_lump__festo_straight1_festo_module_collision_11'>
+          <pose>1.5 -1.8 0 0 -0 0</pose>
+          <geometry>
+            <box>
+            <size>0.8 1.2 2</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='world_interface_fixed_joint_lump__festo_straight2_festo_module_collision_12'>
+          <pose>1.5 -0.6 0 0 -0 0</pose>
+          <geometry>
+            <box>
+            <size>0.8 1.2 2</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='world_interface_fixed_joint_lump__festo_straight3_festo_module_collision_13'>
+          <pose>2.52 0.6 0 0 -0 1.5708</pose>
+          <geometry>
+            <box>
+            <size>0.8 1.2 2</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='world_interface_fixed_joint_lump__festo_t1_festo_module_collision_14'>
+          <pose>1.5 0.6 0 0 -0 3.14159</pose>
+          <geometry>
+            <box>
+            <size>0.8 1.2 2 </size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='world_interface_fixed_joint_lump__bin_1_base_link_visual'>
+          <pose>0.0 1.2 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/smau/AAU_sw/SocialAwareNavigation/Workspace/src/neo_simulations/neo_gazebo/meshes/bin/visual/bin.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <visual name='world_interface_fixed_joint_lump__bin_2_base_link_visual_1'>
+          <pose>0.0 0.4 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/smau/AAU_sw/SocialAwareNavigation/Workspace/src/neo_simulations/neo_gazebo/meshes/bin/visual/bin.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <visual name='world_interface_fixed_joint_lump__bin_3_base_link_visual_2'>
+          <pose>0.0 -0.4 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/smau/AAU_sw/SocialAwareNavigation/Workspace/src/neo_simulations/neo_gazebo/meshes/bin/visual/bin.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <visual name='world_interface_fixed_joint_lump__bin_4_base_link_visual_3'>
+          <pose>0.0 -1.2 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/smau/AAU_sw/SocialAwareNavigation/Workspace/src/neo_simulations/neo_gazebo/meshes/bin/visual/bin.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <visual name='world_interface_fixed_joint_lump__bin_5_base_link_visual_4'>
+          <pose>0.0 -2 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/smau/AAU_sw/SocialAwareNavigation/Workspace/src/neo_simulations/neo_gazebo/meshes/bin/visual/bin.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <visual name='world_interface_fixed_joint_lump__festo_bypass1_festo_module_visual_5'>
+          <pose>1.5 1.8 0 0 -0 3.14159</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/smau/AAU_sw/SocialAwareNavigation/Workspace/src/neo_simulations/neo_gazebo/meshes/festo_bypass_module/festo_bypass_module.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <visual name='world_interface_fixed_joint_lump__festo_straight1_festo_module_visual_6'>
+          <pose>1.5 -1.8 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/smau/AAU_sw/SocialAwareNavigation/Workspace/src/neo_simulations/neo_gazebo/meshes/festo_straight_module/festo_straight_module.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <visual name='world_interface_fixed_joint_lump__festo_straight2_festo_module_visual_7'>
+          <pose>1.5 -0.6 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/smau/AAU_sw/SocialAwareNavigation/Workspace/src/neo_simulations/neo_gazebo/meshes/festo_straight_module/festo_straight_module.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <visual name='world_interface_fixed_joint_lump__festo_straight3_festo_module_visual_8'>
+          <pose>2.52 0.6 0 0 -0 1.5708</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/smau/AAU_sw/SocialAwareNavigation/Workspace/src/neo_simulations/neo_gazebo/meshes/festo_bypass_module/festo_bypass_module.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <visual name='world_interface_fixed_joint_lump__festo_t1_festo_module_visual_9'>
+          <pose>1.5 0.6 0 0 -0 3.14159</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/smau/AAU_sw/SocialAwareNavigation/Workspace/src/neo_simulations/neo_gazebo/meshes/festo_t_module/festo_t_module.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <pose>-0.18064 0.366288 0 0 -0 0</pose>
+    </model>
+    <model name='robot_pedestal_0'>
+      <link name='world_interface'>
+        <inertial>
+          <pose>0 0 0 0 -0 0</pose>
+          <mass>500</mass>
+          <inertia>
+            <ixx>0.001</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.001</iyy>
+            <iyz>0</iyz>
+            <izz>0.001</izz>
+          </inertia>
+        </inertial>
+        <collision name='world_interface_fixed_joint_lump__robot1pedestal_link_collision'>
+          <pose>0 0 0.475 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>0.3 0.3 0.95</size>
+            </box>
+          </geometry>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <friction>
+              <ode/>
+              <torsional>
+                <ode/>
+              </torsional>
+            </friction>
+            <bounce/>
+          </surface>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='world_interface_fixed_joint_lump__robot1pedestal_link_visual'>
+          <pose>0 0 0.475 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>0.3 0.3 0.95</size>
+            </box>
+          </geometry>
+          <material>
+            <script>
+              <name>Gazebo/Blue</name>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+            </script>
+          </material>
+        </visual>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <static>1</static>
+      <pose>0.647906 -0.080261 0 0 -0 0</pose>
+    </model>
+    <model name='beer_bottle'>
+      <pose>1.4 1 1.5 0 -0 0</pose>
+      <link name='link'>
+        
+        <inertial>
+          <pose>0 0 0 0 -0 0</pose>
+          <mass>0.18</mass>
+          <inertia>
+            <ixx>0.000093350</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.000093350</iyy>
+            <iyz>0</iyz>
+            <izz>0.000016360</izz>
+          </inertia>
+        </inertial>
+        <collision name='collision'>
+          <pose>0 0 0.25 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>0.025 0.025 0.001</size>
+            </box>
+          </geometry>
+        </collision>
+        <collision name='collision2'>
+          <pose>0 0 0.125 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>0.02 0.02 0.25</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+
+            <contact>
+              <ode>
+                <max_vel>5.0</max_vel>
+                <min_depth>0.001</min_depth> <!-- meter -->
+                <kp>10000</kp> <!-- Dynamically 'stiffness'-equivalent coefficient for contact joints -->
+                <kd>0</kd> <!-- Dynamically 'damping'-equivalent coefficient for contact joints -->
+              </ode>
+            </contact>
+
+            <bounce>
+                <restitution_coefficient>0.5</restitution_coefficient> <!-- "max_vel" must be higher than 0.0 -->
+                <threshold>0.01</threshold>
+            </bounce>
+
+            <friction>
+              <ode>
+                <mu>1</mu>
+                <mu2>1</mu2>
+              </ode>
+            </friction>
+
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <pose>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/smau/AAU_sw/SocialAwareNavigation/Workspace/src/neo_simulations/neo_gazebo/urdf/beer_bottle.dae</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <name>Gazebo/Green</name>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+            </script>
+          </material>
+        </visual>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      
+    </model>
+    
+    <state world_name='default'>
+      <sim_time>241 580000000</sim_time>
+      <real_time>540 120922230</real_time>
+      <wall_time>1645525877 45091747</wall_time>
+      <iterations>241580</iterations>
+      <model name='Fib14'>
+        <pose>0 0 0 0 -0 0</pose>
+        <scale>1 1 1</scale>
+        <link name='link_0'>
+          <pose>0 0 0 0 -0 0</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+      </model>
+      <!--model name='beer_bottle'>
+        <pose>0 0 0 0 -0 0</pose>
+        <scale>1 1 1</scale>
+        <link name='world_interface'>
+          <pose>1.4 1 1.5 0 -0 0</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+      </model-->
+
+      <model name='ground_plane'>
+        <pose>0 0 0 0 -0 0</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose>0 0 0 0 -0 0</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='omtp'>
+        <pose>0 0 0 0 -0 0</pose>
+        <scale>1 1 1</scale>
+        <link name='world_interface'>
+          <pose>0 0 0 0 -0 0</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='robot_pedestal'>
+        <pose>0 0 0 0 -0 0</pose>
+        <scale>1 1 1</scale>
+        <link name='world_interface'>
+          <pose>0.85 -1.8 0 0 -0 0</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='robot_pedestal_0'>
+        <pose>0 0 0 0 -0 0</pose>
+        <scale>1 1 1</scale>
+        <link name='world_interface'>
+          <pose>0.85 1 0 0 -0 0</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+      </model>
+      <light name='sun'>
+        <pose>0 0 10 0 -0 0</pose>
+      </light>
+    </state>
+    <gui fullscreen='0'>
+      <camera name='user_camera'>
+        <pose>-7.90749 5.30756 9.50785 -0 0.743643 -0.806992</pose>
+        <view_controller>orbit</view_controller>
+        <projection_type>perspective</projection_type>
+      </camera>
+    </gui>
+  </world>
+</sdf>

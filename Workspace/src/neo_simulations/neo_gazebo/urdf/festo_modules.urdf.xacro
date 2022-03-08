@@ -1,0 +1,55 @@
+<?xml version="1.0" ?>
+<robot name="festo_modules" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name = "festo_modules" params = "name parent_link *origin">
+    <!--Macro to spawn all festo modules that relate to a parent_base_link such that they are moveable and turnable in a nice way-->
+    <!--Might need a rename though-->
+
+    <link name="${name}_base_link"/>
+
+    <joint name="${name}_joint" type="fixed">
+      <parent link="${parent_link}" />
+      <child link="${name}_base_link" />
+      <xacro:insert_block name="origin" />
+    </joint>
+
+    <!-- ==================================================== -->
+    <!-- Festo Module Straight 1 -->
+    <!-- ==================================================== -->
+    <xacro:include filename="$(find aau_lab_ros_models)/urdf/festo_straight_module/festo_straight_module.urdf.xacro"/>
+    <xacro:festo_module_urdf module_prefix="festo_straight1_" festo_module_parent="${name}_base_link">
+    <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+    </xacro:festo_module_urdf>
+    
+    <!-- ==================================================== -->
+    <!-- Festo Module Straight 2 -->
+    <!-- ==================================================== -->
+    <xacro:festo_module_urdf module_prefix="festo_straight2_" festo_module_parent="${name}_base_link">
+      <origin xyz="0.0 1.2 0.0" rpy="0 0 0"/>
+    </xacro:festo_module_urdf>
+
+    <!-- ==================================================== -->
+    <!-- Festo Module T 1 -->
+    <!-- ==================================================== -->
+    <xacro:include filename="$(find aau_lab_ros_models)/urdf/festo_t_module/festo_t_module.urdf.xacro"/>
+    <xacro:festo_module_urdf module_prefix="festo_t1_" festo_module_parent="${name}_base_link">
+      <origin xyz="0.0 2.4 0.0" rpy="0 0 ${pi}"/>
+    </xacro:festo_module_urdf>
+    
+    <!-- ==================================================== -->
+    <!-- Festo Bypass 1 -->
+    <!-- ==================================================== -->
+    <xacro:include filename="$(find aau_lab_ros_models)/urdf/festo_bypass_module/festo_bypass_module.urdf.xacro"/>
+    <xacro:festo_module_urdf module_prefix="festo_bypass1_" festo_module_parent="${name}_base_link">
+      <origin xyz="0.0 3.6 0.0" rpy="0 0 ${pi}"/>
+    </xacro:festo_module_urdf>
+
+    <!-- ==================================================== -->
+    <!-- Festo Module Straight 3 -->
+    <!-- ==================================================== -->
+    <xacro:festo_module_urdf module_prefix="festo_straight3_" festo_module_parent="${name}_base_link">
+      <origin xyz="1.02 2.4 0.0" rpy="0 0 ${pi/2}"/>
+    </xacro:festo_module_urdf>
+  </xacro:macro>
+
+</robot>

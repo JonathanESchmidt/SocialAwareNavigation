@@ -1,0 +1,49 @@
+<sdf version='1.7'>
+  <model name='robot_pedestal'>
+    <link name='world_interface'>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>500</mass>
+        <inertia>
+          <ixx>0.001</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.001</iyy>
+          <iyz>0</iyz>
+          <izz>0.001</izz>
+        </inertia>
+      </inertial>
+      <collision name='world_interface_fixed_joint_lump__robot1pedestal_link_collision'>
+        <pose>0 0 0.475 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.3 0.3 0.95</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='world_interface_fixed_joint_lump__robot1pedestal_link_visual'>
+        <pose>0 0 0.475 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.3 0.3 0.95</size>
+          </box>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Blue</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+        </material>
+      </visual>
+    </link>
+    <static>1</static>
+  </model>
+</sdf>

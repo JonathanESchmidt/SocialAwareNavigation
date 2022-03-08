@@ -1,0 +1,48 @@
+<?xml version="1.0" ?>
+<robot name="bins" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find omtp_support)/urdf/bin/bin.urdf.xacro"/>
+
+  <xacro:macro name = "bin" params = "name parent_link *origin">
+
+    <!-- Macro that spawns one bin including its joint -->
+    <xacro:bin_urdf prefix="${name}"/>
+    
+    <joint name="${name}_joint" type="fixed">
+      <parent link="${parent_link}" />
+      <child link="${name}_base_link" />
+      <xacro:insert_block name="origin" />
+    </joint>
+  </xacro:macro>
+
+  <xacro:macro name = "bins" params = "name parent_link *origin">
+    <!--Macro to spawn five consecutive bins that all relate to a parent_base_link such that they are moveable and turnable in a nice way-->
+    <!--Might need a rename though-->
+    <link name="${name}_base_link"/>
+    <joint name="${name}_joint" type="fixed">
+      <parent link="${parent_link}" />
+      <child link="${name}_base_link" />
+      <xacro:insert_block name="origin" />
+    </joint>
+
+    <xacro:bin name="bin_1" parent_link="${name}_base_link">
+      <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+    </xacro:bin>
+
+    <xacro:bin name="bin_2" parent_link="${name}_base_link">
+      <origin xyz="0.0 -0.8 0.0" rpy="0 0 0" />
+    </xacro:bin>
+
+    <xacro:bin name="bin_3" parent_link="${name}_base_link">
+      <origin xyz="0.0 -1.6 0.0" rpy="0 0 0" />
+    </xacro:bin>
+
+    <xacro:bin name="bin_4" parent_link="${name}_base_link">
+      <origin xyz="0.0 -2.4 0.0" rpy="0 0 0" />
+    </xacro:bin>
+
+    <xacro:bin name="bin_5" parent_link="${name}_base_link">
+      <origin xyz="0.0 -3.2 0.0" rpy="0 0 0" />
+    </xacro:bin>
+  </xacro:macro>
+</robot>

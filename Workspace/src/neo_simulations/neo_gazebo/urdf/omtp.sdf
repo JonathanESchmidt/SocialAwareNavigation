@@ -1,0 +1,249 @@
+<sdf version='1.7'>
+  <model name='omtp'>
+    <joint name='world_interface_to_world' type='fixed'>
+      <pose relative_to='__model__'>0 0 0 0 -0 0</pose>
+      <parent>world</parent>
+      <child>world_interface</child>
+    </joint>
+    <link name='world_interface'>
+      <pose relative_to='world_interface_to_world'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0.697015 -0.141294 0.004975 0 -0 0</pose>
+        <mass>1005</mass>
+        <inertia>
+          <ixx>1483.11</ixx>
+          <ixy>-310.776</ixy>
+          <ixz>4.98507</ixz>
+          <iyy>1112.21</iyy>
+          <iyz>1.29353</iyz>
+          <izz>2570.37</izz>
+        </inertia>
+      </inertial>
+      <collision name='world_interface_fixed_joint_lump__bin_1_base_link_collision'>
+        <pose>-0.3 1.2 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://omtp_support/meshes/bin/collision/bin_bottom.dae</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <collision name='world_interface_fixed_joint_lump__bin_1_base_link_collision_1'>
+        <pose>-0.3 1.2 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://omtp_support/meshes/bin/collision/bin_sides.dae</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <collision name='world_interface_fixed_joint_lump__bin_2_base_link_collision_2'>
+        <pose>-0.3 0.4 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://omtp_support/meshes/bin/collision/bin_bottom.dae</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <collision name='world_interface_fixed_joint_lump__bin_2_base_link_collision_3'>
+        <pose>-0.3 0.4 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://omtp_support/meshes/bin/collision/bin_sides.dae</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <collision name='world_interface_fixed_joint_lump__bin_3_base_link_collision_4'>
+        <pose>-0.3 -0.4 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://omtp_support/meshes/bin/collision/bin_bottom.dae</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <collision name='world_interface_fixed_joint_lump__bin_3_base_link_collision_5'>
+        <pose>-0.3 -0.4 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://omtp_support/meshes/bin/collision/bin_sides.dae</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <collision name='world_interface_fixed_joint_lump__bin_4_base_link_collision_6'>
+        <pose>-0.3 -1.2 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://omtp_support/meshes/bin/collision/bin_bottom.dae</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <collision name='world_interface_fixed_joint_lump__bin_4_base_link_collision_7'>
+        <pose>-0.3 -1.2 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://omtp_support/meshes/bin/collision/bin_sides.dae</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <collision name='world_interface_fixed_joint_lump__bin_5_base_link_collision_8'>
+        <pose>-0.3 -2 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://omtp_support/meshes/bin/collision/bin_bottom.dae</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <collision name='world_interface_fixed_joint_lump__bin_5_base_link_collision_9'>
+        <pose>-0.3 -2 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://omtp_support/meshes/bin/collision/bin_sides.dae</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <collision name='world_interface_fixed_joint_lump__festo_bypass1_festo_module_collision_10'>
+        <pose>1.5 1.8 0 0 -0 3.14159</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://aau_lab_ros_models/meshes/festo_bypass_module/festo_bypass_module.dae</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <collision name='world_interface_fixed_joint_lump__festo_straight1_festo_module_collision_11'>
+        <pose>1.5 -1.8 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://aau_lab_ros_models/meshes/festo_straight_module/festo_straight_module.dae</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <collision name='world_interface_fixed_joint_lump__festo_straight2_festo_module_collision_12'>
+        <pose>1.5 -0.6 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://aau_lab_ros_models/meshes/festo_straight_module/festo_straight_module.dae</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <collision name='world_interface_fixed_joint_lump__festo_straight3_festo_module_collision_13'>
+        <pose>2.52 0.6 0 0 -0 1.5708</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://aau_lab_ros_models/meshes/festo_bypass_module/festo_bypass_module.dae</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <collision name='world_interface_fixed_joint_lump__festo_t1_festo_module_collision_14'>
+        <pose>1.5 0.6 0 0 -0 3.14159</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://aau_lab_ros_models/meshes/festo_t_module/festo_t_module.dae</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name='world_interface_fixed_joint_lump__bin_1_base_link_visual'>
+        <pose>-0.3 1.2 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://omtp_support/meshes/bin/visual/bin.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='world_interface_fixed_joint_lump__bin_2_base_link_visual_1'>
+        <pose>-0.3 0.4 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://omtp_support/meshes/bin/visual/bin.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='world_interface_fixed_joint_lump__bin_3_base_link_visual_2'>
+        <pose>-0.3 -0.4 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://omtp_support/meshes/bin/visual/bin.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='world_interface_fixed_joint_lump__bin_4_base_link_visual_3'>
+        <pose>-0.3 -1.2 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://omtp_support/meshes/bin/visual/bin.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='world_interface_fixed_joint_lump__bin_5_base_link_visual_4'>
+        <pose>-0.3 -2 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://omtp_support/meshes/bin/visual/bin.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='world_interface_fixed_joint_lump__festo_bypass1_festo_module_visual_5'>
+        <pose>1.5 1.8 0 0 -0 3.14159</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://aau_lab_ros_models/meshes/festo_bypass_module/festo_bypass_module.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='world_interface_fixed_joint_lump__festo_straight1_festo_module_visual_6'>
+        <pose>1.5 -1.8 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://aau_lab_ros_models/meshes/festo_straight_module/festo_straight_module.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='world_interface_fixed_joint_lump__festo_straight2_festo_module_visual_7'>
+        <pose>1.5 -0.6 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://aau_lab_ros_models/meshes/festo_straight_module/festo_straight_module.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='world_interface_fixed_joint_lump__festo_straight3_festo_module_visual_8'>
+        <pose>2.52 0.6 0 0 -0 1.5708</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://aau_lab_ros_models/meshes/festo_bypass_module/festo_bypass_module.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='world_interface_fixed_joint_lump__festo_t1_festo_module_visual_9'>
+        <pose>1.5 0.6 0 0 -0 3.14159</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://aau_lab_ros_models/meshes/festo_t_module/festo_t_module.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+</sdf>

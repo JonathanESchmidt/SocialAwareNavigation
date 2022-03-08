@@ -1,0 +1,48 @@
+<sdf version='1.7'>
+  <model name='beer_bottle'>
+    <joint name='world_interface_to_world' type='fixed'>
+      <pose relative_to='__model__'>0 0 0 0 -0 0</pose>
+      <parent>world</parent>
+      <child>world_interface</child>
+    </joint>
+    <link name='world_interface'>
+      <pose relative_to='world_interface_to_world'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 -0 0</pose>
+        <mass>0.19</mass>
+        <inertia>
+          <ixx>0.93350</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.93350</iyy>
+          <iyz>0</iyz>
+          <izz>0.16360</izz>
+        </inertia>
+      </inertial>
+      <collision name='world_interface_fixed_joint_lump__beer_bottle_base_link_collision'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://beer_bottle/meshes/beer_bottle.dae</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name='world_interface_fixed_joint_lump__beer_bottle_base_link_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://beer_bottle/meshes/beer_bottle.dae</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Green</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+</sdf>

@@ -1,0 +1,80 @@
+digraph G {
+node [shape=box];
+"world" [label="world"];
+"world_interface" [label="world_interface"];
+"bin_1_base_link" [label="bin_1_base_link"];
+"bin_1_drop_point" [label="bin_1_drop_point"];
+"bin_2_base_link" [label="bin_2_base_link"];
+"bin_2_drop_point" [label="bin_2_drop_point"];
+"bin_3_base_link" [label="bin_3_base_link"];
+"bin_3_drop_point" [label="bin_3_drop_point"];
+"bin_4_base_link" [label="bin_4_base_link"];
+"bin_4_drop_point" [label="bin_4_drop_point"];
+"bin_5_base_link" [label="bin_5_base_link"];
+"bin_5_drop_point" [label="bin_5_drop_point"];
+"fib14" [label="fib14"];
+"robot1_pedestal_link" [label="robot1_pedestal_link"];
+"panda_1_link0" [label="panda_1_link0"];
+"panda_1_link1" [label="panda_1_link1"];
+"panda_1_link2" [label="panda_1_link2"];
+"panda_1_link3" [label="panda_1_link3"];
+"panda_1_link4" [label="panda_1_link4"];
+"panda_1_link5" [label="panda_1_link5"];
+"panda_1_link6" [label="panda_1_link6"];
+"panda_1_link7" [label="panda_1_link7"];
+"panda_1_link8" [label="panda_1_link8"];
+"panda_1_hand" [label="panda_1_hand"];
+"panda_1_leftfinger" [label="panda_1_leftfinger"];
+"panda_1_rightfinger" [label="panda_1_rightfinger"];
+node [shape=ellipse, color=blue, fontcolor=blue];
+"world" -> "world_interface_to_world" [label="xyz: 0 0 0 \nrpy: 0 -0 0"]
+"world_interface_to_world" -> "world_interface"
+"world_interface" -> "bin_1_joint" [label="xyz: -0.3 1.2 0 \nrpy: 0 -0 0"]
+"bin_1_joint" -> "bin_1_base_link"
+"bin_1_base_link" -> "bin_1_joint_1" [label="xyz: 0 0 1 \nrpy: 0 -0 0"]
+"bin_1_joint_1" -> "bin_1_drop_point"
+"world_interface" -> "bin_2_joint" [label="xyz: -0.3 0.4 0 \nrpy: 0 -0 0"]
+"bin_2_joint" -> "bin_2_base_link"
+"bin_2_base_link" -> "bin_2_joint_1" [label="xyz: 0 0 1 \nrpy: 0 -0 0"]
+"bin_2_joint_1" -> "bin_2_drop_point"
+"world_interface" -> "bin_3_joint" [label="xyz: -0.3 -0.4 0 \nrpy: 0 -0 0"]
+"bin_3_joint" -> "bin_3_base_link"
+"bin_3_base_link" -> "bin_3_joint_1" [label="xyz: 0 0 1 \nrpy: 0 -0 0"]
+"bin_3_joint_1" -> "bin_3_drop_point"
+"world_interface" -> "bin_4_joint" [label="xyz: -0.3 -1.2 0 \nrpy: 0 -0 0"]
+"bin_4_joint" -> "bin_4_base_link"
+"bin_4_base_link" -> "bin_4_joint_1" [label="xyz: 0 0 1 \nrpy: 0 -0 0"]
+"bin_4_joint_1" -> "bin_4_drop_point"
+"world_interface" -> "bin_5_joint" [label="xyz: -0.3 -2 0 \nrpy: 0 -0 0"]
+"bin_5_joint" -> "bin_5_base_link"
+"bin_5_base_link" -> "bin_5_joint_1" [label="xyz: 0 0 1 \nrpy: 0 -0 0"]
+"bin_5_joint_1" -> "bin_5_drop_point"
+"world_interface" -> "fib14_to_world_interface" [label="xyz: 0 0 0 \nrpy: 0 -0 0"]
+"fib14_to_world_interface" -> "fib14"
+"world_interface" -> "robot1_pedestal_joint" [label="xyz: 0.5 1.8 0 \nrpy: 0 -0 0"]
+"robot1_pedestal_joint" -> "robot1_pedestal_link"
+"robot1_pedestal_link" -> "panda_1_virtual_joint" [label="xyz: 0 0 0.95 \nrpy: 0 -0 0"]
+"panda_1_virtual_joint" -> "panda_1_link0"
+"panda_1_link0" -> "panda_1_joint1" [label="xyz: 0 0 0.333 \nrpy: 0 -0 0"]
+"panda_1_joint1" -> "panda_1_link1"
+"panda_1_link1" -> "panda_1_joint2" [label="xyz: 0 0 0 \nrpy: -1.5708 0 0"]
+"panda_1_joint2" -> "panda_1_link2"
+"panda_1_link2" -> "panda_1_joint3" [label="xyz: 0 -0.316 0 \nrpy: 1.5708 -0 0"]
+"panda_1_joint3" -> "panda_1_link3"
+"panda_1_link3" -> "panda_1_joint4" [label="xyz: 0.0825 0 0 \nrpy: 1.5708 -0 0"]
+"panda_1_joint4" -> "panda_1_link4"
+"panda_1_link4" -> "panda_1_joint5" [label="xyz: -0.0825 0.384 0 \nrpy: -1.5708 0 0"]
+"panda_1_joint5" -> "panda_1_link5"
+"panda_1_link5" -> "panda_1_joint6" [label="xyz: 0 0 0 \nrpy: 1.5708 -0 0"]
+"panda_1_joint6" -> "panda_1_link6"
+"panda_1_link6" -> "panda_1_joint7" [label="xyz: 0.088 0 0 \nrpy: 1.5708 -0 0"]
+"panda_1_joint7" -> "panda_1_link7"
+"panda_1_link7" -> "panda_1_joint8" [label="xyz: 0 0 0.107 \nrpy: 0 -0 0"]
+"panda_1_joint8" -> "panda_1_link8"
+"panda_1_link8" -> "panda_1_hand_joint" [label="xyz: 0 0 0 \nrpy: 0 0 -0.785398"]
+"panda_1_hand_joint" -> "panda_1_hand"
+"panda_1_hand" -> "panda_1_finger_joint1" [label="xyz: 0 0 0.0584 \nrpy: 0 -0 0"]
+"panda_1_finger_joint1" -> "panda_1_leftfinger"
+"panda_1_hand" -> "panda_1_finger_joint2" [label="xyz: 0 0 0.0584 \nrpy: 0 -0 0"]
+"panda_1_finger_joint2" -> "panda_1_rightfinger"
+}
