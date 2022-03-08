@@ -2,7 +2,7 @@
 <launch>
   <!-- THIS WILL NOT RUN WITHOUT A MAP ! -->
   <!-- REPLACE THIS LINE WITH PATH TO MAP, ONCE IT IS MADE USING nav2dslam.launch -->
-  <arg name="map_name" default="default.yaml" />
+  <arg name="map_name" default="map_name.yaml" />
   <arg name="env_map" default="$(find neo_bringup)/maps/$(arg map_name)" />
   <arg name="sim" default="false"/>
   <arg name="debug" default="false"/>
