@@ -1,4 +1,3 @@
-from ast import mod
 import tensorflow as tf
 from tf2_yolov4.anchors import YOLOV4_ANCHORS
 from tf2_yolov4.model import YOLOv4
@@ -35,7 +34,7 @@ class tfYOLOv4():
             yolo_score_threshold=0.5,
         )
 
-        self.model.load_weights('yolov4.h5')
+        self.model.load_weights('./yolov4.h5')
 
     def predict(self, img_path):
         self.image = tf.io.read_file(img_path)
@@ -84,10 +83,6 @@ if __name__ == "__main__":
     
 
     testModel.show()
-    showDone = time.time()
-    delta = showDone - predictDone
-    print(f"Showing with model took: {delta}")
-
     start = time.time()
 
     testModel.predict('Test2.jpeg')
@@ -96,6 +91,3 @@ if __name__ == "__main__":
     print(f"Prediciton with model took: {delta}")
 
     testModel.show()
-    show2Done = time.time()
-    delta = show2Done - predict2Done
-    print(f"Showing with model took: {delta}")
