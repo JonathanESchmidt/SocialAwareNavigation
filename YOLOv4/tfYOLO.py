@@ -6,7 +6,7 @@ import time
  
 
 class tfYOLOv4():
-    def __init__(self, width = 1024, height = 768):
+    def __init__(self, width = 1024, height = 768, weights = './yolov4.h5'):
 
         self.WIDTH, self.HEIGHT = (width, height)
 
@@ -34,7 +34,7 @@ class tfYOLOv4():
             yolo_score_threshold=0.5,
         )
 
-        self.model.load_weights('./yolov4.h5')
+        self.model.load_weights(weights)
 
     def predict(self, img_path):
         self.image = tf.io.read_file(img_path)
