@@ -181,3 +181,6 @@ CATKIN_IGNORE
 
 # Local History for Visual Studio Code
 .history/
+
+# Weights from tensorflow
+*.h5
