@@ -1,3 +1,3 @@
-tensorflow
-tf2-yolov4
-matplotlib
+tensorflow >= 2.8
+tf2-yolov4 >= 0.1
+matplotlib >= 3.5
