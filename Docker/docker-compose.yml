@@ -4,7 +4,7 @@ services:
     build: .
     command: tail -f /dev/null
     volumes: 
-      - ./Workspace:/root/robot/
+      - ./../Workspace:/root/robot/
     environment:
       - DISPLAY=novnc:0.0
     env_file:
