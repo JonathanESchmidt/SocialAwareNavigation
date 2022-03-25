@@ -15,9 +15,7 @@ from people_detection.msg import BoundingBox,BoundingBoxes
 import cv2
 import numpy as np
 
-
-#Just a wrapper so we can make derivates if we need to use other architectures
-class peopleLocaliser:
+class PeopleLocaliser():
     """
     A class used to localise people for the ROS peoples messages
     using an Intel realsense camera
@@ -94,8 +92,23 @@ class peopleLocaliser:
         #TODO: add system for publishing Bounding boxes
 
     def findPeople(self):
-        #TODO: add 
+        """
+        Main function for detection and publishing people
+        """
+        colour, depth = self.captureImages()
+        detections = None
+
+        if self.networkname == "ssd-mobilenet-v2":
+            detections = self.detectSSD(colour)
+
+        if detections:
+            people = self.findPosition(detections, depth)
+        
+    def findPosition(self, detections, depth):
+        #TODO: add function for finding distance of people
         pass
+
+
 
     def captureImages(self):
         """
@@ -122,9 +135,9 @@ class peopleLocaliser:
     def getClass(self, Index):
         return self.labels[Index]#in case there is no function otherwise overwrite
 
-    def detect(self, image):#this is very specific to the network architecture so pass
-        #TODO: add detector stuff
+    def detectSSD(self, image):#this is very specific to the network architecture so pass
         pass
+ 
 
 
 
@@ -157,3 +170,16 @@ class peopleLocaliser:
     def __del__(self):
         print("Detector destroyed")
         self.pipeline.stop()
+
+if __name__ == "__main__":
+    #get path of the weights from rospkg so we can use it relative
+    rospack = rospkg.RosPack()
+
+    
+    rospy.init_node('people_detection')
+    r = rospy.Rate(10) # 10hz
+
+    detector = PeopleLocaliser()
+
+    while not rospy.is_shutdown():
+        detector.findPeople()
