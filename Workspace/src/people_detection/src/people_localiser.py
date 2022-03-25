@@ -11,7 +11,7 @@ import argparse
 import sys
 
 from people_detection.msg import BoundingBox,BoundingBoxes
-from people_msgs.msg import People,Person,PositionMeasurement,PositionMeasurementArray ##Including everything for now might needs some weeding out later
+from people_msgs.msg import People,Person
 import cv2
 import numpy as np
 
@@ -89,6 +89,8 @@ class PeopleLocaliser():
         else:
             #TODO: use the get class function for detections
             pass
+        
+        self.initdetectNet() #TODO hardcoded for now might need a switch case for different architectures
 
         #TODO: add system for publishing Bounding boxes
 
@@ -152,7 +154,7 @@ class PeopleLocaliser():
         rospy.loginfo("Entered getClass")
         return self.labels[Index]#in case there is no function otherwise overwrite
 
-    def initSSD(self): #TODO this needs to be called from either INIT or from outside
+    def initdetectNet(self): #TODO this needs to be called from either INIT or from outside
         self.net = jetson.inference.detectNet(self.networkname, sys.argv, self.threshold)
         
     def detectSSD(self, image):#this is very specific to the network architecture so pass
@@ -161,6 +163,11 @@ class PeopleLocaliser():
         ----------
         image : cv:Mat as BGR
             the image that contains humans in regular opencv image format
+
+        Return
+        ----------
+        detections : detectNet.Detection[]
+            an array of all detections higher than the specified threshold
         """
         rospy.loginfo("Entered detectSSD")
 
