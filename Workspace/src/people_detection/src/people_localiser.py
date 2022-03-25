@@ -96,16 +96,23 @@ class PeopleLocaliser():
         """
         Main function for detection and publishing people
         """
-        colour, depth = self.captureImages()
+        timestamp, frameid = 0 #Stand-in until added to capture image
+        colour, depth = self.captureImages() #TODO add timestamp and frameid
         detections = None
 
         if self.networkname == "ssd-mobilenet-v2":
             detections = self.detectSSD(colour)
 
+        people = []
+
         for i in len(detections):
             # TODO: fill out person object
             person = 0
-            people = self.findPosition(detections, depth)
+            person.position = self.findPosition(detections, depth)
+
+            people.append(person)
+        
+        self.rosPeoplemsg(people, frameid, timestamp)
         
     def findPosition(self, detections, depth):
         #TODO: add function for finding distance of people
@@ -141,9 +148,6 @@ class PeopleLocaliser():
     def detectSSD(self, image):#this is very specific to the network architecture so pass
         pass
  
-
-
-
     def rosPeoplemsg(self, persons, frameid, timestamp):
 
         """
@@ -163,7 +167,6 @@ class PeopleLocaliser():
 
         self.peoplePub.publish(people)
         
-
     def rosBBmsg(self, detections):
         """
         Publish the detected bounding boxes to the ROS network
