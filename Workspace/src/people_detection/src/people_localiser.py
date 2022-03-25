@@ -67,9 +67,7 @@ class peopleLocaliser:
         self.publishBB = publishBB
         self.peopleDetector = peopleDetector
         self.detections = None
-        self.labels = {0: "person"} #TODO: add file for labels
-
-
+        
         #Setup of Realsense camera
         self.pipeline = rs.pipeline()
         self.config = rs.config()
@@ -77,7 +75,7 @@ class peopleLocaliser:
         self.config.enable_stream(rs.stream.depth, 1280, 720, rs.format.z16, 30)
         self.config.enable_stream(rs.stream.color, 1280, 720, rs.format.bgr8, 30)
 
-        self.profile = self.pipeline.start(config)
+        self.profile = self.pipeline.start(self.config)
         self.depth_sensor = self.profile.get_device().first_depth_sensor()
         self.depth_scale = self.depth_sensor.get_depth_scale()
 
@@ -88,8 +86,7 @@ class peopleLocaliser:
             self.pub = rospy.Publisher('people', BoundingBoxes, queue_size=10)
 
         if self.peopleDetector:
-            #TODO: add the index for people
-            pass
+            self.labels = {0: "person"}
         else:
             #TODO: use the get class function for detections
             pass
@@ -135,7 +132,10 @@ class peopleLocaliser:
         #TODO: add ros msg
         pass
 
-    def rosBBmsg(self, detections):#This is the general structure assuming a DetectNet like detections object overwrite if necessary
+    def rosBBmsg(self, detections):
+        """
+        Publish the detected bounding boxes to the ROS network
+        """
         Boxes = BoundingBoxes()
         Box = BoundingBox()
         Index = 0
