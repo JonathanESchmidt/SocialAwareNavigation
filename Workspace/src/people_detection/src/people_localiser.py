@@ -96,6 +96,8 @@ class PeopleLocaliser():
         """
         Main function for detection and publishing people
         """
+        rospy.loginfo("Entered findPeople")
+
         timestamp, frameid = 0 #Stand-in until added to capture image
         colour, depth = self.captureImages() #TODO add timestamp and frameid
         detections = None
@@ -115,6 +117,7 @@ class PeopleLocaliser():
         self.rosPeoplemsg(people, frameid, timestamp)
         
     def findPosition(self, detections, depth):
+        rospy.loginfo("Entered findPosition")
         #TODO: add function for finding distance of people
         pass
 
@@ -131,6 +134,9 @@ class PeopleLocaliser():
         depth_image : np_array
             output depth image aligned with colour image
         """
+
+        rospy.loginfo("Entered captureImages")
+        
         frames = self.pipeline.wait_for_frames()
 
         aligned_frames = self.align.process(frames)
@@ -143,13 +149,14 @@ class PeopleLocaliser():
         return colour_image, depth_image
 
     def getClass(self, Index):
+        rospy.loginfo("Entered getClass")
         return self.labels[Index]#in case there is no function otherwise overwrite
 
     def detectSSD(self, image):#this is very specific to the network architecture so pass
+        rospy.loginfo("Entered detectSSD")
         pass
  
     def rosPeoplemsg(self, persons, frameid, timestamp):
-
         """
         Parameters
         ----------
@@ -160,6 +167,8 @@ class PeopleLocaliser():
         timestamp : rospy.rostime.Time
             the time stamp of when the picture has been taken
         """
+        rospy.loginfo("Entered rosPeoplemsg")
+
         people = People()
         people.people = persons
         people.header.stamp = timestamp#we might want to make this the time of when the camera recorded the people
@@ -171,6 +180,9 @@ class PeopleLocaliser():
         """
         Publish the detected bounding boxes to the ROS network
         """
+
+        rospy.loginfo("Entered rosBBmsg")
+
         Boxes = BoundingBoxes()
         Box = BoundingBox()
         Index = 0
