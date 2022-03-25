@@ -152,9 +152,22 @@ class PeopleLocaliser():
         rospy.loginfo("Entered getClass")
         return self.labels[Index]#in case there is no function otherwise overwrite
 
+    def initSSD(self): #TODO this needs to be called from either INIT or from outside
+        self.net = jetson.inference.detectNet(self.networkname, sys.argv, self.threshold)
+        
     def detectSSD(self, image):#this is very specific to the network architecture so pass
+        """
+        Parameters
+        ----------
+        image : cv:Mat as BGR
+            the image that contains humans in regular opencv image format
+        """
         rospy.loginfo("Entered detectSSD")
-        pass
+
+        image = cv2.cvtColor(input, cv2.COLOR_RGB2RGBA).astype(np.float32)#converting the image to a cuda compatible image
+        image = jetson.utils.cudaFromNumpy(image)
+
+        return self.net.Detect(image, input.shape[1], input.shape[0])#returning the detected objects
  
     def rosPeoplemsg(self, persons, frameid, timestamp):
         """
