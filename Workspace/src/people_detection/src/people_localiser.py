@@ -102,7 +102,9 @@ class PeopleLocaliser():
         if self.networkname == "ssd-mobilenet-v2":
             detections = self.detectSSD(colour)
 
-        if detections:
+        for i in len(detections):
+            # TODO: fill out person object
+            person = 0
             people = self.findPosition(detections, depth)
         
     def findPosition(self, detections, depth):
