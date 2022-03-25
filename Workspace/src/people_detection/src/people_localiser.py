@@ -20,6 +20,7 @@ import numpy as np
 class peopleLocaliser:
     """
     A class used to localise people for the ROS peoples messages
+    using an Intel realsense camera
     ...
 
     Attributes
@@ -41,7 +42,7 @@ class peopleLocaliser:
     TODO: Add description of methods
     """
 
-    def __init__(self, networkname = "ssd-mobilenet-v2", threshold = 0.5, publishROS = True,  peopleDetector = True, publishBB = False):
+    def __init__(self, networkname = "ssd-mobilenet-v2", resolution = (1280, 720), threshold = 0.5, publishROS = True,  peopleDetector = True, publishBB = False):
         """
         Parameters
         ----------
@@ -60,12 +61,28 @@ class peopleLocaliser:
 
         self.net = None
         self.networkname = networkname
+        self.resolution = resolution
         self.threshold = threshold
         self.publishROSmsg = publishROS
         self.publishBB = publishBB
         self.peopleDetector = peopleDetector
         self.detections = None
         self.labels = {0: "person"} #TODO: add file for labels
+
+
+        #Setup of Realsense camera
+        self.pipeline = rs.pipeline()
+        self.config = rs.config()
+
+        self.config.enable_stream(rs.stream.depth, 1280, 720, rs.format.z16, 30)
+        self.config.enable_stream(rs.stream.color, 1280, 720, rs.format.bgr8, 30)
+
+        self.profile = self.pipeline.start(config)
+        self.depth_sensor = self.profile.get_device().first_depth_sensor()
+        self.depth_scale = self.depth_sensor.get_depth_scale()
+
+        self.align_to = rs.stream.color
+        self.align = rs.align(self.align_to)
 
         if self.publishROSmsg: #only init publisher if necessary
             self.pub = rospy.Publisher('people', BoundingBoxes, queue_size=10)
@@ -84,8 +101,26 @@ class peopleLocaliser:
         pass
 
     def captureImages(self):
-        #TODO: add realsense image stuff
-        pass
+        """
+        Uses the Realsense pipeline to wait for and align colour and depth image
+
+        Return
+        -------
+        colour_image : np_array
+            output colour image aligned with depth image
+        depth_image : np_array
+            output depth image aligned with colour image
+        """
+        frames = self.pipeline.wait_for_frames()
+
+        aligned_frames = self.align.process(frames)
+        aligned_depth_frame = aligned_frames.get_depth_frame()
+        colour_frame = aligned_frames.get_color_frame()
+
+        depth_image = np.asanyarray(aligned_depth_frame.get_data())
+        colour_image = np.asanyarray(colour_frame.get_data())
+        
+        return colour_image, depth_image
 
     def getClass(self, Index):
         return self.labels[Index]#in case there is no function otherwise overwrite
@@ -118,3 +153,7 @@ class peopleLocaliser:
 
         Boxes.header.stamp = rospy.Time.now()
         self.pub.publish(Boxes)
+
+    def __del__(self):
+        print("Detector destroyed")
+        self.pipeline.stop()
