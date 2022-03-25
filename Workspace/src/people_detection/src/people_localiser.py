@@ -11,7 +11,7 @@ import argparse
 import sys
 
 from people_detection.msg import BoundingBox,BoundingBoxes
-
+from people_msgs.msg import People,Person,PositionMeasurement,PositionMeasurementArray ##Including everything for now might needs some weeding out later
 import cv2
 import numpy as np
 
@@ -80,8 +80,9 @@ class PeopleLocaliser():
         self.align_to = rs.stream.color
         self.align = rs.align(self.align_to)
 
+        self.peoplePub = rospy.Publisher('people', People , queue_size=10)
         if self.publishROSmsg: #only init publisher if necessary
-            self.pub = rospy.Publisher('people', BoundingBoxes, queue_size=10)
+            self.bbPub = rospy.Publisher('BoundingBoxes', BoundingBoxes, queue_size=10)
 
         if self.peopleDetector:
             self.labels = {0: "person"}
@@ -141,9 +142,25 @@ class PeopleLocaliser():
 
 
 
-    def rosPeoplemsg(selv, person):
-        #TODO: add ros msg
-        pass
+    def rosPeoplemsg(self, persons, frameid, timestamp):
+
+        """
+        Parameters
+        ----------
+        persons : people_msgs/Person[]
+            an array that contains all of the detected humans,
+        frameid : str
+            specifies to which tf-frame the positions of the detectet people are relative to,
+        timestamp : rospy.rostime.Time
+            the time stamp of when the picture has been taken
+        """
+        people = People()
+        people.people = persons
+        people.header.stamp = timestamp#we might want to make this the time of when the camera recorded the people
+        people.header.frame_id = frameid
+
+        self.peoplePub.publish(people)
+        
 
     def rosBBmsg(self, detections):
         """
@@ -165,7 +182,7 @@ class PeopleLocaliser():
             Index += 1
 
         Boxes.header.stamp = rospy.Time.now()
-        self.pub.publish(Boxes)
+        self.bbPub.publish(Boxes)
 
     def __del__(self):
         print("Detector destroyed")
