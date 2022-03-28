@@ -14,6 +14,7 @@ from people_detection.msg import BoundingBox,BoundingBoxes
 from people_msgs.msg import People,Person
 import cv2
 import numpy as np
+import math
 
 class PeopleLocaliser():
     """
@@ -40,13 +41,19 @@ class PeopleLocaliser():
     TODO: Add description of methods
     """
 
-    def __init__(self, networkname = "ssd-mobilenet-v2", resolution = (1280, 720), threshold = 0.5, publishROS = True,  peopleDetector = True, publishBB = False):
+    def __init__(self, networkname = "ssd-mobilenet-v2",
+                resolution = (1280, 720), threshold = 0.5, HFOV = 91.2,
+                publishROS = True, peopleDetector = True, publishBB = False):
         """
         Parameters
         ----------
         network : str
             a string representing the network used 
             available networks are: "ssd-mobilenet-v2",
+        resolution : tuple(int)
+            resolution to be used by the camera
+        HFOV : float
+            Horizontal field of view of the camera
         threshold : float
             threshold of probability for detected objects
         publishROS : bool
@@ -59,7 +66,9 @@ class PeopleLocaliser():
 
         self.net = None
         self.networkname = networkname
-        self.resolution = resolution
+        self.resolutionX = resolution[0]
+        self.resolutiony = resolution[1]
+        self.HFOV = HFOV 
         self.threshold = threshold
         self.publishROSmsg = publishROS
         self.publishBB = publishBB
@@ -70,8 +79,8 @@ class PeopleLocaliser():
         self.pipeline = rs.pipeline()
         self.config = rs.config()
 
-        self.config.enable_stream(rs.stream.depth, 1280, 720, rs.format.z16, 30)
-        self.config.enable_stream(rs.stream.color, 1280, 720, rs.format.bgr8, 30)
+        self.config.enable_stream(rs.stream.depth, self.resolutionX, self.resolutionY, rs.format.z16, 30)
+        self.config.enable_stream(rs.stream.color, self.resolutionX, self.resolutionY, rs.format.bgr8, 30)
 
         self.profile = self.pipeline.start(self.config)
         self.depth_sensor = self.profile.get_device().first_depth_sensor()
@@ -118,10 +127,43 @@ class PeopleLocaliser():
         
         self.rosPeoplemsg(people, frameid, timestamp)
         
-    def findPosition(self, detections, depth):
+    def findPosition(self, top, left, right, bottom, depth):
+        """
+        Parameters
+        ----------
+        depth : numpy array 
+            numpy array of depth aligned with the image for detections
+
+        Return
+        ----------
+        distance : float
+            distance to the detected person in meters
+
+        angle : float
+            angle to the centre of the bounding box of the person
+        """
         rospy.loginfo("Entered findPosition")
         #TODO: add function for finding distance of people
-        pass
+        width = right - left
+        height = bottom - top
+
+        centreX = int(left + (width/2))
+        centreY = int(top + (height/2))
+
+        distBox = depth[centreX-(width/4):centreX+(width/4), centreY-(height/4):centreY+(height/4)]
+
+        distBox = distBox.flatten()
+        distBox = np.delete(distBox, np.argwhere(distBox == 0))
+
+        distance = np.average(distBox)
+
+        angleX = math.atan2((2*centreX*math.tan(self.HFOV))/self.resolutionX)
+
+
+        return distance, angleX
+
+
+        
 
 
 
