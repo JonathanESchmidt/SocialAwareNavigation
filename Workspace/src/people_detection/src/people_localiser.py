@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from cmath import sin
 import rospy
 import rospkg
 import jetson.inference
@@ -114,16 +115,9 @@ class PeopleLocaliser():
         detections = None
 
         if self.networkname == "ssd-mobilenet-v2":
-            detections = self.detectSSD(colour)
+            people = self.detectSSD(colour)
 
-        people = []
 
-        for i in len(detections):
-            # TODO: fill out person object
-            person = 0
-            person.position = self.findPosition(detections, depth)
-
-            people.append(person)
         
         self.rosPeoplemsg(people, frameid, timestamp)
         
@@ -199,24 +193,40 @@ class PeopleLocaliser():
     def initdetectNet(self): #TODO this needs to be called from either INIT or from outside
         self.net = jetson.inference.detectNet(self.networkname, sys.argv, self.threshold)
         
-    def detectSSD(self, image):#this is very specific to the network architecture so pass
+    def detectSSD(self, image, depth):#this is very specific to the network architecture so pass
         """
         Parameters
         ----------
-        image : cv:Mat as BGR
-            the image that contains humans in regular opencv image format
+        image : np.array[]
+            regular numpy array in bgr8 convention
 
         Return
         ----------
-        detections : detectNet.Detection[]
-            an array of all detections higher than the specified threshold
+        people : people_msgs/Person[]
+            array of persons
         """
         rospy.loginfo("Entered detectSSD")
 
-        image = cv2.cvtColor(image, cv2.COLOR_RGB2RGBA).astype(np.float32)#converting the image to a cuda compatible image
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGBA).astype(np.float32)#converting the image to a cuda compatible image
         image = jetson.utils.cudaFromNumpy(image)
 
-        return self.net.Detect(image, image.shape[1], image.shape[0])#returning the detected objects
+        detections = self.net.Detect(image, image.shape[1], image.shape[0])#returning the detected objects
+        persons = []
+
+        for detection in detections:
+            # TODO: fill out person object
+            person = Person()
+
+            distance, angle = self.findPosition(detection.Top, detection.Left, detection.Right, detection.Bottom, detection, depth)
+
+            person.position.x = np.sin(angle) * distance # calculate cartesian coordinates
+            person.position.y = np.cos(angle) * distance
+            person.position.z = 0
+            #TODO if we introduce tracking we want to introduce velocities for the people here based on that
+            persons.append(person)
+
+        return persons
+
  
     def rosPeoplemsg(self, persons, frameid, timestamp):
         """
@@ -240,7 +250,10 @@ class PeopleLocaliser():
         
     def rosBBmsg(self, detections):
         """
-        Publish the detected bounding boxes to the ROS network
+        Parameters
+        ----------
+        detections : detectNet.Detection[]
+            an array of all detections
         """
 
         rospy.loginfo("Entered rosBBmsg")
