@@ -11,3 +11,7 @@ local_costmap:
   transform_tolerance: 1.5
   #inflation_layer/inflation_radius: 0.3
   #inflation_layer/cost_scaling_factor: 2.5
+
+  plugins:
+    - {name: social_layer,           type: "social_navigation_layers::ProxemicLayer", output: "screen"}
+    - {name: social_pass_layer,      type: "social_navigation_layers::PassingLayer", output: "screen"}

@@ -31,3 +31,7 @@ local_costmap:
   # Inflation layer
   # cost_scaling_factor: 10.0 # Default: 10.0
   inflation_radius: 0.4     # Inflation of objects picked up by the laser scanners e.g. humans
+
+  plugins:
+    - {name: social_layer,           type: "social_navigation_layers::ProxemicLayer", output: "screen"}
+    - {name: social_pass_layer,      type: "social_navigation_layers::PassingLayer", output: "screen"}

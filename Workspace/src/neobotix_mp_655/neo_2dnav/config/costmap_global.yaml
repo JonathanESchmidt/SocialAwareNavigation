@@ -22,3 +22,7 @@ global_costmap:
                             # in the middle of areas, instead of going very close to objects and walls.
                             # The robot can still go through narrow areas, just at a higher cost, so it
                             # may find a longer and more open route.
+
+  plugins:
+    - {name: social_layer,           type: "social_navigation_layers::ProxemicLayer", output: "screen"}
+    - {name: social_pass_layer,      type: "social_navigation_layers::PassingLayer", output: "screen"}
