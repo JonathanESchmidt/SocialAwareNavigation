@@ -130,7 +130,7 @@ class PeopleLocaliser():
         """
         Main function for detection and publishing people
         """
-        rospy.loginfo("Entered findPeople")
+        #rospy.loginfo("Entered findPeople")
 
         timestamp = None
         frameid = None #Stand-in until added to capture image
@@ -249,7 +249,7 @@ class PeopleLocaliser():
             # TODO: fill out person object
             person = Person()
 
-            distance, angle = self.findPosition(detection.Top, detection.Left, detection.Right, detection.Bottom, detection, depth)
+            distance, angle = self.findPosition(detection.Top, detection.Left, detection.Right, detection.Bottom, depth)
 
             person.position.x = np.sin(angle) * distance # calculate cartesian coordinates
             person.position.y = np.cos(angle) * distance
