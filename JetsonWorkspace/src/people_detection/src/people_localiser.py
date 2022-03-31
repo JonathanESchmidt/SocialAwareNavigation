@@ -132,7 +132,7 @@ class PeopleLocaliser():
         """
         #rospy.loginfo("Entered findPeople")
 
-        timestamp = rospy.rostime.now()
+        timestamp = rospy.Time.now()
         frameid = 'baselink' #Stand-in until added to capture image
         colour, depth = self.captureImages()#TODO call find depth function
         detections = None
