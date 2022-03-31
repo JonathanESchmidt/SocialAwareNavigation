@@ -179,11 +179,6 @@ class PeopleLocaliser():
 
         return distance, angleX
 
-
-        
-
-
-
     def captureImages(self):
         """
         Uses the Realsense pipeline to wait for and align colour and depth image
@@ -202,8 +197,6 @@ class PeopleLocaliser():
         this now just returns the latest depth and rgb image
         
         """
-
-
 
         # rospy.loginfo("Entered captureImages")
         
@@ -316,7 +309,6 @@ if __name__ == "__main__":
     #get path of the weights from rospkg so we can use it relative
     rospack = rospkg.RosPack()
 
-    
     rospy.init_node('people_detection')
     r = rospy.Rate(10) # 10hz
 
