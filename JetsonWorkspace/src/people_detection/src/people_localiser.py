@@ -136,7 +136,7 @@ class PeopleLocaliser():
         frameid = None #Stand-in until added to capture image
         colour, depth = self.captureImages()#TODO call find depth function
         detections = None
-        if colour.any() != None:
+        if isinstance(colour, type(None)):
             if self.networkname == "ssd-mobilenet-v2":
                 people = self.detectSSD(colour, depth)
 
