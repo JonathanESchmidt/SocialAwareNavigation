@@ -167,7 +167,7 @@ class PeopleLocaliser():
         centreX = int(left + (width/2))
         centreY = int(top + (height/2))
 
-        distBox = depth[centreX-(width/4):centreX+(width/4), centreY-(height/4):centreY+(height/4)]
+        distBox = depth[int(centreX-(width/4)):int(centreX+(width/4)), int(centreY-(height/4)):int(centreY+(height/4))]
 
         distBox = distBox.flatten()
         distBox = np.delete(distBox, np.argwhere(distBox == 0))
