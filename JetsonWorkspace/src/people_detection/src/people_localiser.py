@@ -132,12 +132,13 @@ class PeopleLocaliser():
         """
         rospy.loginfo("Entered findPeople")
 
-        timestamp, frameid = 0 #Stand-in until added to capture image
+        timestamp = None
+        frameid = None #Stand-in until added to capture image
         colour, depth = self.captureImages()#TODO call find depth function
         detections = None
-
-        if self.networkname == "ssd-mobilenet-v2":
-            people = self.detectSSD(colour)
+        if colour != None:
+            if self.networkname == "ssd-mobilenet-v2":
+                people = self.detectSSD(colour, depth)
 
 
         
@@ -238,7 +239,7 @@ class PeopleLocaliser():
         """
         rospy.loginfo("Entered detectSSD")
 
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGBA).astype(np.float32)#converting the image to a cuda compatible image
+        image = cv2.cvtColor(image, cv2.COLOR_BGRA2RGBA).astype(np.float32)#converting the image to a cuda compatible image
         image = jetson.utils.cudaFromNumpy(image)
 
         detections = self.net.Detect(image, image.shape[1], image.shape[0])#returning the detected objects
