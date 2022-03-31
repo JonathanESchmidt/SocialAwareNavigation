@@ -90,9 +90,9 @@ class PeopleLocaliser():
         #self.config.enable_stream(rs.stream.depth, self.resolutionX, self.resolutionY, rs.format.z16, 30)
         #self.config.enable_stream(rs.stream.color, self.resolutionX, self.resolutionY, rs.format.bgr8, 30)
 
-        self.profile = self.pipeline.start(self.config)
-        self.depth_sensor = self.profile.get_device().first_depth_sensor()
-        self.depth_scale = self.depth_sensor.get_depth_scale()
+        #self.profile = self.pipeline.start(self.config)
+        #self.depth_sensor = self.profile.get_device().first_depth_sensor()
+        #self.depth_scale = self.depth_sensor.get_depth_scale()
 
         #self.align_to = rs.stream.color
         #self.align = rs.align(self.align_to)
