@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 from cmath import sin
 import rospy
@@ -6,7 +6,7 @@ import rospkg
 import jetson.inference
 import jetson.utils
 
-import pyrealsense2 as rs
+#import pyrealsense2 as rs
 
 import argparse
 import sys
@@ -80,22 +80,22 @@ class PeopleLocaliser():
         self.detections = None
         
         #Setup of Realsense camera
-        self.pipeline = rs.pipeline()
-        self.config = rs.config()
+        #self.pipeline = rs.pipeline()
+        #self.config = rs.config()
         self.bridge = CvBridge()
         self.rgb=None
         self.depth=None
 
 
-        self.config.enable_stream(rs.stream.depth, self.resolutionX, self.resolutionY, rs.format.z16, 30)
-        self.config.enable_stream(rs.stream.color, self.resolutionX, self.resolutionY, rs.format.bgr8, 30)
+        #self.config.enable_stream(rs.stream.depth, self.resolutionX, self.resolutionY, rs.format.z16, 30)
+        #self.config.enable_stream(rs.stream.color, self.resolutionX, self.resolutionY, rs.format.bgr8, 30)
 
         self.profile = self.pipeline.start(self.config)
         self.depth_sensor = self.profile.get_device().first_depth_sensor()
         self.depth_scale = self.depth_sensor.get_depth_scale()
 
-        self.align_to = rs.stream.color
-        self.align = rs.align(self.align_to)
+        #self.align_to = rs.stream.color
+        #self.align = rs.align(self.align_to)
 
         self.peoplePub = rospy.Publisher('people', People , queue_size=10)
         if self.publishROSmsg: #only init publisher if necessary
