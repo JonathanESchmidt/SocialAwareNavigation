@@ -174,7 +174,7 @@ class PeopleLocaliser():
 
         distance = np.average(distBox)
 
-        angleX = math.atan2((2*centreX*math.tan(self.HFOV))/self.resolutionX)
+        angleX = math.atan((2*centreX*math.tan(self.HFOV))/self.resolutionX)
 
 
         return distance, angleX
