@@ -132,8 +132,8 @@ class PeopleLocaliser():
         """
         #rospy.loginfo("Entered findPeople")
 
-        timestamp = None
-        frameid = None #Stand-in until added to capture image
+        timestamp = rospy.rostime.now()
+        frameid = 'baselink' #Stand-in until added to capture image
         colour, depth = self.captureImages()#TODO call find depth function
         detections = None
         if not isinstance(colour, type(None)) and not isinstance(depth, type(None)):
