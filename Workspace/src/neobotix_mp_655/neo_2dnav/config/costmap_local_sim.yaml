@@ -15,6 +15,4 @@ local_costmap:
      - {name: static_map,       type: "costmap_2d::StaticLayer"}
      - {name: obstacles,        type: "costmap_2d::VoxelLayer"}
      - {name: inflation_layer,  type: "costmap_2d::InflationLayer"}
-    #- {name: static_map,             type: "costmap_2d::StaticLayer"}
-    #- {name: social_layer,           type: "social_navigation_layers::ProxemicLayer"}
-    #- {name: social_pass_layer,      type: "social_navigation_layers::PassingLayer"}
+     - {name: social_layer,     type: "social_navigation_layers::ProxemicLayer"}
