@@ -142,7 +142,7 @@ class PeopleLocaliser():
 
 
         
-        self.rosPeoplemsg(people, frameid, timestamp)
+            self.rosPeoplemsg(people, frameid, timestamp)
         
     def findPosition(self, top, left, right, bottom, depth):
         """
