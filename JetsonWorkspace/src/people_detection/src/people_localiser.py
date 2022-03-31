@@ -13,6 +13,9 @@ import sys
 
 from people_detection.msg import BoundingBox,BoundingBoxes
 from people_msgs.msg import People,Person
+from sensor_msgs.msg import Image
+
+from cv_bridge import CvBridge
 import cv2
 import numpy as np
 import math
@@ -79,6 +82,10 @@ class PeopleLocaliser():
         #Setup of Realsense camera
         self.pipeline = rs.pipeline()
         self.config = rs.config()
+        self.bridge = CvBridge()
+        self.rgb=None
+        self.depth=None
+
 
         self.config.enable_stream(rs.stream.depth, self.resolutionX, self.resolutionY, rs.format.z16, 30)
         self.config.enable_stream(rs.stream.color, self.resolutionX, self.resolutionY, rs.format.bgr8, 30)
@@ -104,6 +111,21 @@ class PeopleLocaliser():
 
         #TODO: add system for publishing Bounding boxes
 
+        #Definition of subscribers to the realsense topics
+        self.rgb_sub = rospy.Subscriber('/camera/color/image_raw', Image, self.rgb_callback)
+        self.depth_sub = rospy.Subscriber('/camera/aligned_depth_to_color/image_raw', Image, self.depth_callback)
+
+    def rgb_callback(self, rgb):
+        try:
+            self.rgb = self.bridge.imgmsg_to_cv2(rgb, desired_encoding='passthrough')
+        except:
+            pass
+    def depth_callback(self,depth):
+        try:
+            self.depth = self.bridge.imgmsg_to_cv2(depth, desired_encoding='passthrough')
+        except:
+            pass
+    
     def findPeople(self):
         """
         Main function for detection and publishing people
@@ -111,7 +133,7 @@ class PeopleLocaliser():
         rospy.loginfo("Entered findPeople")
 
         timestamp, frameid = 0 #Stand-in until added to capture image
-        colour, depth = self.captureImages() #TODO add timestamp and frameid
+        colour, depth = self.captureImages()#TODO call find depth function
         detections = None
 
         if self.networkname == "ssd-mobilenet-v2":
@@ -172,19 +194,28 @@ class PeopleLocaliser():
         depth_image : np_array
             output depth image aligned with colour image
         """
-
-        rospy.loginfo("Entered captureImages")
         
-        frames = self.pipeline.wait_for_frames()
-
-        aligned_frames = self.align.process(frames)
-        aligned_depth_frame = aligned_frames.get_depth_frame()
-        colour_frame = aligned_frames.get_color_frame()
-
-        depth_image = np.asanyarray(aligned_depth_frame.get_data())
-        colour_image = np.asanyarray(colour_frame.get_data())
+        """
+        BRIEF
+        -------
+        this now just returns the latest depth and rgb image
         
-        return colour_image, depth_image
+        """
+
+
+
+        # rospy.loginfo("Entered captureImages")
+        
+        # frames = self.pipeline.wait_for_frames()
+
+        # aligned_frames = self.align.process(frames)
+        # aligned_depth_frame = aligned_frames.get_depth_frame()
+        # colour_frame = aligned_frames.get_color_frame()
+
+        # depth_image = np.asanyarray(aligned_depth_frame.get_data())
+        # colour_image = np.asanyarray(colour_frame.get_data())
+        
+        return self.rgb, self.depth
 
     def getClass(self, Index):
         rospy.loginfo("Entered getClass")
