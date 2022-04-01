@@ -22,3 +22,9 @@ global_costmap:
                             # in the middle of areas, instead of going very close to objects and walls.
                             # The robot can still go through narrow areas, just at a higher cost, so it
                             # may find a longer and more open route.
+
+  plugins:
+     - {name: static_map,       type: "costmap_2d::StaticLayer"}
+     - {name: obstacles,        type: "costmap_2d::VoxelLayer"}
+     - {name: inflation_layer,  type: "costmap_2d::InflationLayer"}
+     - {name: social_layer,     type: "social_navigation_layers::ProxemicLayer"}
