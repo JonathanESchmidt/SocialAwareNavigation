@@ -158,7 +158,9 @@ class PeopleLocaliser():
         #distBox = depth[int(centreX-(width/4)):int(centreX+(width/4)), int(centreY-(height/4)):int(centreY+(height/4))]
 
         ##get distances of depth image assuming same resolution and allignment relative to bounding box coordinates
-        distBox = depth[int(left + (width/4)):int(right - (width/4)), int(top + (height/4)):int(bottom - (height/4))]
+        depth = self.bridge.imgmsg_to_cv2(depth, "passthrough")
+        distBox = np.array(depth, dtype=np.uint16)[int(left + (width/4)):int(right - (width/4)), int(top + (height/4)):int(bottom - (height/4))]*0.001
+        #distBox = depth[int(left + (width/4)):int(right - (width/4)), int(top + (height/4)):int(bottom - (height/4))]
         distBox = distBox.flatten()
         distBox = np.delete(distBox, np.argwhere(distBox == 0))
 
