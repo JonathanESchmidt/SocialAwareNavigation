@@ -44,7 +44,7 @@ class PeopleLocaliser():
     """
 
     def __init__(self, networkname = "ssd-mobilenet-v2",
-                resolution = (1280, 720), threshold = 0.5, HFOV = 91.2,
+                resolution = (1280, 720), threshold = 0.5, HFOV = np.radians(91.2),
                 publishROS = True, peopleDetector = True, publishBB = False):
         """
         Parameters
