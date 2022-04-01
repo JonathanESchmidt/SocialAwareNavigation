@@ -91,7 +91,7 @@ class PeopleLocaliser():
             #TODO: use the get class function for detections
             pass
         
-        self.initdetectNet() #TODO hardcoded for now might need a switch case for different architectures
+        self.initdetectNet()
 
         #TODO: add system for publishing Bounding boxes
 
@@ -117,7 +117,7 @@ class PeopleLocaliser():
 
         timestamp = rospy.Time.now()
         frameid = 'baselink' #Stand-in until added to capture image
-        colour, depth = self.captureImages()#TODO call find depth function
+        colour, depth = self.captureImages()
 
         #Check if there is images available
         if not isinstance(colour, type(None)) and not isinstance(depth, type(None)):
@@ -142,7 +142,7 @@ class PeopleLocaliser():
             angle to the centre of the bounding box of the person
         """
         rospy.loginfo("Entered findPosition")
-        #TODO: add function for finding distance of people
+        #TODO: calculate position correctly
         width = right - left
         height = bottom - top
 
@@ -172,7 +172,7 @@ class PeopleLocaliser():
         rospy.loginfo("Entered getClass")
         return self.labels[Index]#in case there is no function otherwise overwrite
 
-    def initdetectNet(self): #TODO this needs to be called from either INIT or from outside
+    def initdetectNet(self):
         self.net = jetson.inference.detectNet(self.networkname, sys.argv, self.threshold)
         
     def detectSSD(self, image, depth):#this is very specific to the network architecture so pass
