@@ -106,7 +106,7 @@ class PeopleLocaliser():
             pass
     def depth_callback(self,depth):
         try:
-            self.depth = self.bridge.imgmsg_to_cv2(depth, desired_encoding='passthrough')
+            self.depth = np.array(self.bridge.imgmsg_to_cv2(depth, desired_encoding='passthrough'), dtype=np.uint16)*0.001
         except:
             pass
     
@@ -159,8 +159,7 @@ class PeopleLocaliser():
 
         ##get distances of depth image assuming same resolution and allignment relative to bounding box coordinates
         depth = self.bridge.imgmsg_to_cv2(depth, "passthrough")
-        distBox = np.array(depth, dtype=np.uint16)[int(left + (width/4)):int(right - (width/4)), int(top + (height/4)):int(bottom - (height/4))]*0.001
-        #distBox = depth[int(left + (width/4)):int(right - (width/4)), int(top + (height/4)):int(bottom - (height/4))]
+        distBox = depth[int(left + (width/4)):int(right - (width/4)), int(top + (height/4)):int(bottom - (height/4))]
         distBox = distBox.flatten()
         distBox = np.delete(distBox, np.argwhere(distBox == 0))
 
