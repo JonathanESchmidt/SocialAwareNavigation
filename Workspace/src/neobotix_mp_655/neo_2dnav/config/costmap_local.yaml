@@ -24,8 +24,8 @@ local_costmap:
                             # complete environment, but only to represent your local surroundings
                             # (e.g. 5m x 5m around your robot). The costmap will then move along with
                             # your robot and will be updated by incoming sensor data.
-  width: 4                  # The width of the map in meters. Default: 10
-  height: 4                 # The height of the map in meters. Default: 10
+  width: 8                  # The width of the map in meters. Default: 10
+  height: 8                 # The height of the map in meters. Default: 10
   resolution: 0.05          # The resolution of the map in meters/cell. Default: 0.05
 
   # Inflation layer
