@@ -6,6 +6,8 @@ import rospkg
 import jetson.inference
 import jetson.utils
 
+#import pyrealsense2 as rs
+
 import argparse
 import sys
 
@@ -77,9 +79,23 @@ class PeopleLocaliser():
         self.peopleDetector = peopleDetector
         self.detections = None
         
+        #Setup of Realsense camera
+        #self.pipeline = rs.pipeline()
+        #self.config = rs.config()
         self.bridge = CvBridge()
         self.rgb=None
         self.depth=None
+
+
+        #self.config.enable_stream(rs.stream.depth, self.resolutionX, self.resolutionY, rs.format.z16, 30)
+        #self.config.enable_stream(rs.stream.color, self.resolutionX, self.resolutionY, rs.format.bgr8, 30)
+
+        #self.profile = self.pipeline.start(self.config)
+        #self.depth_sensor = self.profile.get_device().first_depth_sensor()
+        #self.depth_scale = self.depth_sensor.get_depth_scale()
+
+        #self.align_to = rs.stream.color
+        #self.align = rs.align(self.align_to)
 
         self.peoplePub = rospy.Publisher('people', People , queue_size=10)
         if self.publishROSmsg: #only init publisher if necessary
@@ -114,15 +130,17 @@ class PeopleLocaliser():
         """
         Main function for detection and publishing people
         """
+        #rospy.loginfo("Entered findPeople")
 
         timestamp = rospy.Time.now()
         frameid = 'baselink' #Stand-in until added to capture image
         colour, depth = self.captureImages()#TODO call find depth function
-
-        #Check if there is images available
+        detections = None
         if not isinstance(colour, type(None)) and not isinstance(depth, type(None)):
             if self.networkname == "ssd-mobilenet-v2":
                 people = self.detectSSD(colour, depth)
+
+
         
             self.rosPeoplemsg(people, frameid, timestamp)
         
@@ -161,11 +179,36 @@ class PeopleLocaliser():
 
         return distance, angleX
 
-    def captureImages(self):    
+    def captureImages(self):
         """
+        Uses the Realsense pipeline to wait for and align colour and depth image
+
+        Return
         -------
-        Assign current images for detection
+        colour_image : np_array
+            output colour image aligned with depth image
+        depth_image : np_array
+            output depth image aligned with colour image
         """
+        
+        """
+        BRIEF
+        -------
+        this now just returns the latest depth and rgb image
+        
+        """
+
+        # rospy.loginfo("Entered captureImages")
+        
+        # frames = self.pipeline.wait_for_frames()
+
+        # aligned_frames = self.align.process(frames)
+        # aligned_depth_frame = aligned_frames.get_depth_frame()
+        # colour_frame = aligned_frames.get_color_frame()
+
+        # depth_image = np.asanyarray(aligned_depth_frame.get_data())
+        # colour_image = np.asanyarray(colour_frame.get_data())
+        
         return self.rgb, self.depth
 
     def getClass(self, Index):
@@ -196,6 +239,7 @@ class PeopleLocaliser():
         persons = []
 
         for detection in detections:
+            # TODO: fill out person object
             person = Person()
 
             distance, angle = self.findPosition(detection.Top, detection.Left, detection.Right, detection.Bottom, depth)
@@ -203,6 +247,7 @@ class PeopleLocaliser():
             person.position.x = np.sin(angle) * distance # calculate cartesian coordinates
             person.position.y = np.cos(angle) * distance
             person.position.z = 0
+            #TODO if we introduce tracking we want to introduce velocities for the people here based on that
             persons.append(person)
 
         return persons
