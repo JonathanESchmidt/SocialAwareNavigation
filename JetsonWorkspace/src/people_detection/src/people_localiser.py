@@ -69,7 +69,7 @@ class PeopleLocaliser():
         self.net = None
         self.networkname = networkname
         self.resolutionX = resolution[0]
-        self.resolutiony = resolution[1]
+        self.resolutionY = resolution[1]
         self.HFOV = HFOV 
         self.threshold = threshold
         self.publishROSmsg = publishROS
@@ -146,17 +146,25 @@ class PeopleLocaliser():
         width = right - left
         height = bottom - top
 
-        centreX = int(left + (width/2))
-        centreY = int(top + (height/2))
+        #relative to the image center such that the distances are postive going right and upwards
+        centreX = (width/2) - (self.resolutionX/2)
+        #centreY = (self.resolutionY/2) - (height/2) not necessary since we dont care about z
 
-        distBox = depth[int(centreX-(width/4)):int(centreX+(width/4)), int(centreY-(height/4)):int(centreY+(height/4))]
+        ### calculate angle relative to the image center such that the angle is positive going to the right
+        #   This assumes that the camera is mounted exactly in the middle of the robot
+        angleX = math.atan((2*centreX*math.tan(self.HFOV/2))/self.resolutionX)
 
+
+        #distBox = depth[int(centreX-(width/4)):int(centreX+(width/4)), int(centreY-(height/4)):int(centreY+(height/4))]
+
+        ##get distances of depth image assuming same resolution and allignment relative to bounding box coordinates
+        distBox = depth[int(left + (width/4)):int(right - (width/4)), int(top + (height/4)):int(bottom - (height/4))]
         distBox = distBox.flatten()
         distBox = np.delete(distBox, np.argwhere(distBox == 0))
 
         distance = np.average(distBox)
 
-        angleX = math.atan((2*centreX*math.tan(self.HFOV))/self.resolutionX)
+        
 
 
         return distance, angleX
