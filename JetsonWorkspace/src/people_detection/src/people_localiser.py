@@ -11,7 +11,7 @@ import sys
 
 from people_detection.msg import BoundingBox,BoundingBoxes
 from people_msgs.msg import People,Person
-from sensor_msgs.msg import Image
+from sensor_msgs.msg import Image,CameraInfo
 
 from cv_bridge import CvBridge
 import cv2
@@ -44,7 +44,7 @@ class PeopleLocaliser():
     """
 
     def __init__(self, networkname = "ssd-mobilenet-v2",
-                resolution = (1280, 720), threshold = 0.5, HFOV = np.radians(91.2),
+                resolution = (640,480), threshold = 0.5, HFOV = np.radians(91.2),
                 publishROS = True, peopleDetector = True, publishBB = False):
         """
         Parameters
@@ -97,7 +97,12 @@ class PeopleLocaliser():
 
         #Definition of subscribers to the realsense topics
         self.rgb_sub = rospy.Subscriber('/camera/color/image_raw', Image, self.rgb_callback)
+        #self.rgb_info_sub = rospy.Subscriber('/camera/color/camera_info', CameraInfo, self.rgb_info_callback)
         self.depth_sub = rospy.Subscriber('/camera/aligned_depth_to_color/image_raw', Image, self.depth_callback)
+
+    #def rgb_info_callback(self, info):
+    #    self.resolutionX=info.width
+    #    self.resolutionY=info.height
 
     def rgb_callback(self, rgb):
         try:
@@ -148,7 +153,7 @@ class PeopleLocaliser():
         height = bottom - top
 
         #relative to the image center such that the distances are postive going right and upwards
-        centreX = (width/2) - (self.resolutionX/2)
+        centreX = ((right + left)/2) - (self.resolutionX/2)
         #centreY = (self.resolutionY/2) - (height/2) not necessary since we dont care about z
 
         ### calculate angle relative to the image center such that the angle is positive going to the right
@@ -210,8 +215,8 @@ class PeopleLocaliser():
 
             distance, angle = self.findPosition(detection.Top, detection.Left, detection.Right, detection.Bottom, depth)
 
-            person.position.x = np.sin(angle) * distance # calculate cartesian coordinates
-            person.position.y = np.cos(angle) * distance
+            person.position.x = np.cos(angle) * distance # calculate cartesian coordinates
+            person.position.y = - np.sin(angle) * distance
             person.position.z = 0
             persons.append(person)
 
