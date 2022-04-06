@@ -25,6 +25,6 @@ global_costmap:
 
   plugins:
      - {name: static_map,       type: "costmap_2d::StaticLayer"}
-     - {name: obstacles,        type: "costmap_2d::VoxelLayer"}
+     - {name: obstacles,        type: "costmap_2d::ObstacleLayer"}
      - {name: inflation_layer,  type: "costmap_2d::InflationLayer"}
      - {name: social_layer,     type: "social_navigation_layers::ProxemicLayer"}
