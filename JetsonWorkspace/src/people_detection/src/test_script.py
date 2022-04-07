@@ -221,9 +221,9 @@ class PeopleLocaliser():
             bottom=detection.Bottom
 
             cv2.rectangle(image, (left, top), (right, bottom), (0, 255, 0), 3)
-            cv2.putText(image, f"Polar: {angle}deg, {distance}m", (100, 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-            cv2.putText(image, f"Cartesian: {x}X, {y}Y", (200, 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
-        cv2.putText(image, f"FPS: {framerate}", (10, 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
+            cv2.putText(image, "Polar: " +str(angle) + "deg, ", str(distance) + "m", (100, 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+            cv2.putText(image, "Cartesian: " +str(x) + "X, " + str(y) + "Y", (200, 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
+        cv2.putText(image, "FPS: " + str(framerate), (10, 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
 
         self.output.write(image)
 
