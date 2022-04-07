@@ -249,7 +249,7 @@ class PeopleLocaliser():
             self.latestTimeStamp=self.timestamp
         ### We want to publish persons if we detect at least one
         ### Or we want to publish an empty people message if the detections have been of len 0 for more the people keep time
-        if  len(persons)>0 or (self.timestamp.to_sec-self.latestTimeStamp.to_sec)>self.peopleKeepTime:
+        if  len(persons)>0 or (self.timestamp.to_sec()-self.latestTimeStamp.to_sec())>self.peopleKeepTime:
             people = People()
             people.people = persons
             people.header.stamp = timestamp#we might want to make this the time of when the camera recorded the people
