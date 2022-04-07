@@ -197,7 +197,7 @@ class PeopleLocaliser():
     def initdetectNet(self):
         self.net = jetson.inference.detectNet(self.networkname, sys.argv, self.threshold)
 
-    def videoCreation(self, image, containsperson, detection , angle, distance):
+    def videoCreation(self, image, containsperson, detection, angle, distance):
         """
         BRIEF
         --------------
@@ -224,6 +224,8 @@ class PeopleLocaliser():
             cv2.putText(image, f"Polar: {angle}deg, {distance}m", (100, 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
             cv2.putText(image, f"Cartesian: {x}X, {y}Y", (200, 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
         cv2.putText(image, f"FPS: {framerate}", (10, 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
+
+        self.output.write(image)
 
         self.FPStimestamp=rospy.Time.now()###should be the last thing that happens
         
@@ -324,6 +326,8 @@ class PeopleLocaliser():
     def __del__(self):
         print("Detector destroyed")
         self.pipeline.stop()
+        cv2.destroyAllWindows()
+        self.output.release()
 
 if __name__ == "__main__":
     #get path of the weights from rospkg so we can use it relative
