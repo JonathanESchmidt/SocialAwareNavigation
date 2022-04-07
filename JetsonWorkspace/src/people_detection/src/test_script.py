@@ -271,7 +271,7 @@ class PeopleLocaliser():
             person.reliability = detection.Confidence
             persons.append(person)
             
-        self.videoCreation(image, bool(len(person)>0), detection , np.degrees(angle), distance,x,y)#give the current state to the video
+        self.videoCreation(image, bool(len(persons)>0), detection , np.degrees(angle), distance,x,y)#give the current state to the video
         return persons
 
  
