@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from cmath import sin
+from turtle import right
 import rospy
 import rospkg
 import jetson.inference
@@ -76,9 +77,9 @@ class PeopleLocaliser():
         self.publishBB = publishBB
         self.peopleDetector = peopleDetector
         self.detections = None
-        self.timestamp = None
+        self.timestamp = rospy.Time.now()
         self.latestTimeStamp = None
-        self.FPStimestamp = None
+        self.Counter = 0
         self.peopleKeepTime = 5 ##Seconds How long to keep detected people after not detecting them anymore
         self.bridge = CvBridge()
         self.rgb=None
@@ -193,9 +194,38 @@ class PeopleLocaliser():
     def initdetectNet(self):
         self.net = jetson.inference.detectNet(self.networkname, sys.argv, self.threshold)
 
-    def videoCreation(self, image):
-        framerate = 1/(self.timestamp.to_sec()-self.FPStimestamp.to_sec())
+    def videoCreation(self, image, containsperson, detection , angle, distance):
+        """
+        BRIEF
+        --------------
+        Image
+        Bounding Box Coordinates
+        Framerate
+        Distance
+        Angle
+        Cartesian Coordinates
+        Flag if contains person
+
+
+        """
+
+        framerate = 1/(rospy.Time.now().to_sec()-self.timestamp.to_sec())# 1/calculationtime
         
+        if containsperson:
+            left=detection.Left
+            right=detection.Right
+            top=detection.Top
+            bottom=detection.Bottom
+        else:
+            left=0
+            right=0
+            top=0
+            bottom=0
+        #### Place your code here ###
+
+
+
+        self.FPStimestamp=rospy.Time.now()###should be the last thing that happens
         
     def detectSSD(self, image, depth):#this is very specific to the network architecture so pass
         """
@@ -233,7 +263,8 @@ class PeopleLocaliser():
 
             person.reliability = detection.Confidence
             persons.append(person)
-
+            
+        self.videoCreation(image, bool(len(person)>0), detection , np.degrees(angle), distance)#give the current state to the video
         return persons
 
  
