@@ -243,10 +243,10 @@ class PeopleLocaliser():
         """
         rospy.loginfo("Entered detectSSD")
 
-        image = cv2.cvtColor(image, cv2.COLOR_BGRA2RGBA).astype(np.float32)#converting the image to a cuda compatible image
-        image = jetson.utils.cudaFromNumpy(image)
+        cudaimage = cv2.cvtColor(image, cv2.COLOR_BGRA2RGBA).astype(np.float32)#converting the image to a cuda compatible image
+        cudaimage = jetson.utils.cudaFromNumpy(image)
 
-        detections = self.net.Detect(image, image.shape[1], image.shape[0])#returning the detected objects
+        detections = self.net.Detect(cudaimage, cudaimage.shape[1], cudaimage.shape[0])#returning the detected objects
         persons = []
         distance = None
         angle = None
