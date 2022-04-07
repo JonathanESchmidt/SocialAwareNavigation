@@ -76,7 +76,9 @@ class PeopleLocaliser():
         self.publishBB = publishBB
         self.peopleDetector = peopleDetector
         self.detections = None
-        
+        self.timestamp = None
+        self.latestTimeStamp = None
+        self.peopleKeepTime = 5 ##Seconds How long to keep detected people after not detecting them anymore
         self.bridge = CvBridge()
         self.rgb=None
         self.depth=None
@@ -121,7 +123,7 @@ class PeopleLocaliser():
         Main function for detection and publishing people
         """
 
-        timestamp = rospy.Time.now()
+        self.timestamp = rospy.Time.now()
         frameid = 'baselink' #Stand-in until added to capture image
         colour, depth = self.captureImages()
 
@@ -130,7 +132,7 @@ class PeopleLocaliser():
             if self.networkname == "ssd-mobilenet-v2":
                 people = self.detectSSD(colour, depth)
         
-            self.rosPeoplemsg(people, frameid, timestamp)
+            self.rosPeoplemsg(people, frameid, self.timestamp)
         
     def findPosition(self, top, left, right, bottom, depth):
         """
@@ -214,10 +216,17 @@ class PeopleLocaliser():
             person = Person()
 
             distance, angle = self.findPosition(detection.Top, detection.Left, detection.Right, detection.Bottom, depth)
+            person.name = "Bob"
+            ##Assuming semi static people
+            person.velocity.x = 0
+            person.velocity.y = 0
+            person.velocity.z = 0
 
             person.position.x = np.cos(angle) * distance # calculate cartesian coordinates
             person.position.y = - np.sin(angle) * distance
             person.position.z = 0
+
+            person.reliability = detection.Confidence
             persons.append(person)
 
         return persons
@@ -236,12 +245,17 @@ class PeopleLocaliser():
         """
         rospy.loginfo("Entered rosPeoplemsg")
 
-        people = People()
-        people.people = persons
-        people.header.stamp = timestamp#we might want to make this the time of when the camera recorded the people
-        people.header.frame_id = frameid
+        if len(persons)>0: #If we detected at least one person update the timestamp of the latest succesful detection
+            self.latestTimeStamp=self.timestamp
+        ### We want to publish persons if we detect at least one
+        ### Or we want to publish an empty people message if the detections have been of len 0 for more the people keep time
+        if  len(persons)>0 or (self.timestamp.to_sec-self.latestTimeStamp.to_sec)>self.peopleKeepTime:
+            people = People()
+            people.people = persons
+            people.header.stamp = timestamp#we might want to make this the time of when the camera recorded the people
+            people.header.frame_id = frameid
 
-        self.peoplePub.publish(people)
+            self.peoplePub.publish(people)
         
     def rosBBmsg(self, detections):
         """
