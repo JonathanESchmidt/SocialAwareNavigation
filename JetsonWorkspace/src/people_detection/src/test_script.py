@@ -219,14 +219,7 @@ class PeopleLocaliser():
             right=detection.Right
             top=detection.Top
             bottom=detection.Bottom
-        else:
-            left=0
-            right=0
-            top=0
-            bottom=0
-        #### Place your code here ###
 
-        if containsperson:
             cv2.rectangle(image, (left, top), (right, bottom), (0, 255, 0), 3)
             cv2.putText(image, f"Polar: {angle}deg, {distance}m", (100, 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
             cv2.putText(image, f"Cartesian: {x}X, {y}Y", (200, 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
