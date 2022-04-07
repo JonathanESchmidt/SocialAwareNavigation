@@ -70,6 +70,9 @@ class PeopleLocaliser():
         self.networkname = networkname
         self.resolutionX = resolution[0]
         self.resolutionY = resolution[1]
+        self.output = cv2.VideoWriter(
+                            "Testname.avi", cv2.VideoWriter_fourcc(*'MPEG'), 30, (self.resolutionY, self.resolutionX))
+
         self.HFOV = HFOV 
         self.threshold = threshold
         self.publishROSmsg = publishROS
@@ -195,6 +198,14 @@ class PeopleLocaliser():
 
     def videoCreation(self, image):
         framerate = 1/(self.timestamp.to_sec()-self.FPStimestamp.to_sec())
+        
+        if person:
+            cv2.rectangle(image, (BBox.Left, BBox.Top), (BBox.Right, BBox.Bottom), (0, 255, 0), 3)
+            cv2.putText(image, f"FPS: {framerate}", (10, 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
+            cv2.putText(image, f"Polar: {angle}deg, {distance}m", (100, 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+            cv2.putText(image, f"Cartesian: {x}X, {y}Y", (200, 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
+
+            
         
         
     def detectSSD(self, image, depth):#this is very specific to the network architecture so pass
