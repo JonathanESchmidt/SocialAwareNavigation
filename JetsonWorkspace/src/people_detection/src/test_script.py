@@ -197,7 +197,7 @@ class PeopleLocaliser():
     def initdetectNet(self):
         self.net = jetson.inference.detectNet(self.networkname, sys.argv, self.threshold)
 
-    def videoCreation(self, image, containsperson, detection, angle, distance):
+    def videoCreation(self, image, containsperson, detection , angle, distance,x,y):
         """
         BRIEF
         --------------
@@ -248,6 +248,10 @@ class PeopleLocaliser():
 
         detections = self.net.Detect(image, image.shape[1], image.shape[0])#returning the detected objects
         persons = []
+        distance = None
+        angle = None
+        x = None
+        y = None
 
         for detection in detections:
             person = Person()
@@ -258,15 +262,16 @@ class PeopleLocaliser():
             person.velocity.x = 0
             person.velocity.y = 0
             person.velocity.z = 0
-
-            person.position.x = np.cos(angle) * distance # calculate cartesian coordinates
-            person.position.y = - np.sin(angle) * distance
+            x= np.cos(angle) * distance
+            y=- np.sin(angle) * distance 
+            person.position.x = x # calculate cartesian coordinates
+            person.position.y = y
             person.position.z = 0
 
             person.reliability = detection.Confidence
             persons.append(person)
             
-        self.videoCreation(image, bool(len(person)>0), detection , np.degrees(angle), distance)#give the current state to the video
+        self.videoCreation(image, bool(len(person)>0), detection , np.degrees(angle), distance,x,y)#give the current state to the video
         return persons
 
  
