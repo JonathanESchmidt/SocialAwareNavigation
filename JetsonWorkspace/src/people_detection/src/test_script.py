@@ -46,7 +46,8 @@ class PeopleLocaliser():
 
     def __init__(self, networkname = "ssd-mobilenet-v2",
                 resolution = (640,480), threshold = 0.5, HFOV = np.radians(69.4),
-                publishROS = True, peopleDetector = True, publishBB = False):
+                publishROS = True, peopleDetector = True, publishBB = False, 
+                video_name = "Testname.avi"):
         """
         Parameters
         ----------
@@ -342,10 +343,12 @@ if __name__ == "__main__":
     #get path of the weights from rospkg so we can use it relative
     rospack = rospkg.RosPack()
 
+    vidName = "testvideo_"+str(sys.argv[1])+".avi"
+
     rospy.init_node('people_detection')
     r = rospy.Rate(10) # 10hz
 
-    detector = PeopleLocaliser()
+    detector = PeopleLocaliser(video_name=vidName)
 
     # while not rospy.is_shutdown():
     for i in range(50):
