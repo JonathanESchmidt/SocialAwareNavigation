@@ -276,8 +276,8 @@ class PeopleLocaliser():
         y = None
         peopledetections=[]
         for detection in detections:
-            rospy.loginfo(str(detection))
-            if int(detection.ClassID) == 0:#Only do this if its a person7
+            #rospy.loginfo(str(detection))
+            if int(detection.ClassID) == 1:#Only do this if its a person7
                 peopledetections.append(detection)
 
                 person = Person()
