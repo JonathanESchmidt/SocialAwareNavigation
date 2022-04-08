@@ -233,7 +233,7 @@ class PeopleLocaliser():
 
             cv2.rectangle(image, (int(left), int(top)), (int(right), int(bottom)), (0, 255, 0), 3)
             cv2.putText(image, "Polar: " +str(round(angle, 2)) + "deg, " + str(round(distance, 2)) + "m", (10, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-            cv2.putText(image, "Cartesian: " +str(round(x, 2)) + "X, " + str(round(y, 2)) + "Y", (10, 200), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
+            cv2.putText(image, "Cartesian: " +str(round(x, 2)) + "X, " + str(round(y, 2)) + "Y", (10, 150), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
         else:
             with open(self.videoName + ".csv", 'a') as csvfile:
                 # creating a csv writer object
@@ -374,7 +374,7 @@ if __name__ == "__main__":
     # while not rospy.is_shutdown():
     #for i in range(50):
     count = 0
-    while (count<5):
+    while (count<100):
         if (detector.findPeople()): count=count+1
         #r.sleep()
 
