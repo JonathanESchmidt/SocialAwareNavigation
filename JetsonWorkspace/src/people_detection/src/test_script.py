@@ -73,7 +73,7 @@ class PeopleLocaliser():
         self.resolutionX = resolution[0]
         self.resolutionY = resolution[1]
         self.output = cv2.VideoWriter(
-                            "Testname.avi", cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), 10, (self.resolutionX, self.resolutionY))
+                            video_name, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), 10, (self.resolutionX, self.resolutionY))
 
         self.HFOV = HFOV 
         self.threshold = threshold
@@ -224,8 +224,8 @@ class PeopleLocaliser():
             angle = np.degrees(angle)
 
             cv2.rectangle(image, (int(left), int(top)), (int(right), int(bottom)), (0, 255, 0), 3)
-            cv2.putText(image, "Polar: " +str(round(angle, 2)) + "deg, " + str(round(distance, 2)) + "m", (200, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-            cv2.putText(image, "Cartesian: " +str(round(x, 2)) + "X, " + str(round(y, 2)) + "Y", (10, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
+            cv2.putText(image, "Polar: " +str(round(angle, 2)) + "deg, " + str(round(distance, 2)) + "m", (10, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+            cv2.putText(image, "Cartesian: " +str(round(x, 2)) + "X, " + str(round(y, 2)) + "Y", (10, 200), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
         cv2.putText(image, "FPS: " + str(round(framerate, 2)), (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
 
         self.output.write(image)
