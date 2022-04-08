@@ -72,7 +72,7 @@ class PeopleLocaliser():
         self.resolutionX = resolution[0]
         self.resolutionY = resolution[1]
         self.output = cv2.VideoWriter(
-                            "Testname.avi", cv2.VideoWriter_fourcc(*'MPEG'), 30, (self.resolutionY, self.resolutionX))
+                            "Testname.avi", cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), 10, (self.resolutionX, self.resolutionY))
 
         self.HFOV = HFOV 
         self.threshold = threshold
@@ -81,7 +81,7 @@ class PeopleLocaliser():
         self.peopleDetector = peopleDetector
         self.detections = None
         self.timestamp = rospy.Time.now()
-        self.latestTimeStamp = None
+        self.latestTimeStamp = rospy.Time.now()
         self.Counter = 0
         self.peopleKeepTime = 5 ##Seconds How long to keep detected people after not detecting them anymore
         self.bridge = CvBridge()
@@ -215,19 +215,21 @@ class PeopleLocaliser():
         framerate = 1/(rospy.Time.now().to_sec()-self.timestamp.to_sec())# 1/calculationtime
         
         if containsperson:
-            left=detection.Left
-            right=detection.Right
-            top=detection.Top
-            bottom=detection.Bottom
+            left=detection[0].Left
+            right=detection[0].Right
+            top=detection[0].Top
+            bottom=detection[0].Bottom
+
+            angle = np.degrees(angle)
 
             cv2.rectangle(image, (int(left), int(top)), (int(right), int(bottom)), (0, 255, 0), 3)
-            cv2.putText(image, "Polar: " +str(angle) + "deg, " + str(distance) + "m", (100, 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-            cv2.putText(image, "Cartesian: " +str(x) + "X, " + str(y) + "Y", (200, 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
-        cv2.putText(image, "FPS: " + str(framerate), (10, 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
+            cv2.putText(image, "Polar: " +str(round(angle, 2)) + "deg, " + str(round(distance, 2)) + "m", (200, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+            cv2.putText(image, "Cartesian: " +str(round(x, 2)) + "X, " + str(round(y, 2)) + "Y", (10, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
+        cv2.putText(image, "FPS: " + str(round(framerate, 2)), (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
 
         self.output.write(image)
 
-        self.FPStimestamp=rospy.Time.now()###should be the last thing that happens
+        self.latestTimeStamp=rospy.Time.now()###should be the last thing that happens
         
     def detectSSD(self, image, depth):#this is very specific to the network architecture so pass
         """
@@ -243,8 +245,10 @@ class PeopleLocaliser():
         """
         rospy.loginfo("Entered detectSSD")
 
+
         cudaimage = cv2.cvtColor(image, cv2.COLOR_BGRA2RGBA).astype(np.float32)#converting the image to a cuda compatible image
-        cudaimage = jetson.utils.cudaFromNumpy(image)
+        cudaimage = jetson.utils.cudaFromNumpy(cudaimage)
+        image = cv2.cvtColor(image, cv2.COLOR_BGRA2RGB)
 
         detections = self.net.Detect(cudaimage, cudaimage.shape[1], cudaimage.shape[0])#returning the detected objects
         persons = []
@@ -271,7 +275,8 @@ class PeopleLocaliser():
             person.reliability = detection.Confidence
             persons.append(person)
             
-        self.videoCreation(image, bool(len(persons)>0), detection , np.degrees(angle), distance,x,y)#give the current state to the video
+        
+        self.videoCreation(image, bool(len(persons)>0), detections, angle, distance, x, y)#give the current state to the video
         return persons
 
  
@@ -292,7 +297,7 @@ class PeopleLocaliser():
             self.latestTimeStamp=self.timestamp
         ### We want to publish persons if we detect at least one
         ### Or we want to publish an empty people message if the detections have been of len 0 for more the people keep time
-        if  len(persons)>0 or (self.timestamp.to_sec-self.latestTimeStamp.to_sec)>self.peopleKeepTime:
+        if  len(persons)>0 or (self.timestamp.to_sec()-self.latestTimeStamp.to_sec())>self.peopleKeepTime:
             people = People()
             people.people = persons
             people.header.stamp = timestamp#we might want to make this the time of when the camera recorded the people
@@ -330,8 +335,7 @@ class PeopleLocaliser():
 
     def __del__(self):
         print("Detector destroyed")
-        self.pipeline.stop()
-        cv2.destroyAllWindows()
+        #cv2.destroyAllWindows()
         self.output.release()
 
 if __name__ == "__main__":
@@ -343,5 +347,8 @@ if __name__ == "__main__":
 
     detector = PeopleLocaliser()
 
-    while not rospy.is_shutdown():
+    # while not rospy.is_shutdown():
+    for i in range(50):
         detector.findPeople()
+        r.sleep()
+    detector.output.release()
