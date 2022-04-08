@@ -139,6 +139,8 @@ class PeopleLocaliser():
                 people = self.detectSSD(colour, depth)
         
             self.rosPeoplemsg(people, frameid, self.timestamp)
+            return True
+        else: return False
         
     def findPosition(self, top, left, right, bottom, depth):
         """
@@ -351,7 +353,10 @@ if __name__ == "__main__":
     detector = PeopleLocaliser(video_name=vidName)
 
     # while not rospy.is_shutdown():
-    for i in range(50):
-        detector.findPeople()
-        r.sleep()
+    #for i in range(50):
+    count = 0
+    while (count<50):
+        if (detector.findPeople()): count=count+1
+        #r.sleep()
+
     detector.output.release()
