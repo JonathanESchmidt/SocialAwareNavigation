@@ -276,6 +276,7 @@ class PeopleLocaliser():
         y = None
         peopledetections=[]
         for detection in detections:
+            rospy.loginfo(str(detection))
             if int(detection.ClassID) == 0:#Only do this if its a person7
                 peopledetections.append(detection)
 
@@ -373,7 +374,7 @@ if __name__ == "__main__":
     # while not rospy.is_shutdown():
     #for i in range(50):
     count = 0
-    while (count<50):
+    while (count<5):
         if (detector.findPeople()): count=count+1
         #r.sleep()
 
