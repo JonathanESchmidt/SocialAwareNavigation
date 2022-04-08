@@ -276,22 +276,23 @@ class PeopleLocaliser():
         y = None
 
         for detection in detections:
-            person = Person()
+            if detection.ClassID == 0:#Only do this if its a person
+                person = Person()
 
-            distance, angle = self.findPosition(detection.Top, detection.Left, detection.Right, detection.Bottom, depth)
-            person.name = "Bob"
-            ##Assuming semi static people
-            person.velocity.x = 0
-            person.velocity.y = 0
-            person.velocity.z = 0
-            x= np.cos(angle) * distance
-            y=- np.sin(angle) * distance 
-            person.position.x = x # calculate cartesian coordinates
-            person.position.y = y
-            person.position.z = 0
+                distance, angle = self.findPosition(detection.Top, detection.Left, detection.Right, detection.Bottom, depth)
+                person.name = "Bob"
+                ##Assuming semi static people
+                person.velocity.x = 0
+                person.velocity.y = 0
+                person.velocity.z = 0
+                x= np.cos(angle) * distance
+                y=- np.sin(angle) * distance 
+                person.position.x = x # calculate cartesian coordinates
+                person.position.y = y
+                person.position.z = 0
 
-            person.reliability = detection.Confidence
-            persons.append(person)
+                person.reliability = detection.Confidence
+                persons.append(person)
             
         
         self.videoCreation(image, bool(len(persons)>0), detections, angle, distance, x, y)#give the current state to the video
