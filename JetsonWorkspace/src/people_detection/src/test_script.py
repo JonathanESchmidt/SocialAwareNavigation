@@ -18,6 +18,7 @@ from cv_bridge import CvBridge
 import cv2
 import numpy as np
 import math
+import csv
 
 class PeopleLocaliser():
     """
@@ -72,8 +73,9 @@ class PeopleLocaliser():
         self.networkname = networkname
         self.resolutionX = resolution[0]
         self.resolutionY = resolution[1]
+        self.videoName = video_name
         self.output = cv2.VideoWriter(
-                            video_name, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), 10, (self.resolutionX, self.resolutionY))
+                            self.videoName, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), 10, (self.resolutionX, self.resolutionY))
 
         self.HFOV = HFOV 
         self.threshold = threshold
@@ -181,9 +183,6 @@ class PeopleLocaliser():
 
         distance = np.average(distBox)
 
-        
-
-
         return distance, angleX
 
     def captureImages(self):    
@@ -222,15 +221,31 @@ class PeopleLocaliser():
             right=detection[0].Right
             top=detection[0].Top
             bottom=detection[0].Bottom
+            
+            with open(self.videoName + ".csv", 'a+', newline='') as csvfile:
+                # creating a csv writer object
+                csvwriter = csv.writer(csvfile)
 
+                # writing the fields
+                csvwriter.writerow([self.timestamp.to_nsec(), framerate, angle, distance, x, y, left, top, right, bottom])
+            
             angle = np.degrees(angle)
 
             cv2.rectangle(image, (int(left), int(top)), (int(right), int(bottom)), (0, 255, 0), 3)
             cv2.putText(image, "Polar: " +str(round(angle, 2)) + "deg, " + str(round(distance, 2)) + "m", (10, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
             cv2.putText(image, "Cartesian: " +str(round(x, 2)) + "X, " + str(round(y, 2)) + "Y", (10, 200), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
+        else:
+            with open(self.videoName + ".csv", 'a+', newline='') as csvfile:
+                # creating a csv writer object
+                csvwriter = csv.writer(csvfile)
+
+                # writing the fields
+                csvwriter.writerow([self.timestamp.to_nsec(), framerate, None, None, None, None, None, None, None, None])
+        
         cv2.putText(image, "FPS: " + str(round(framerate, 2)), (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
 
         self.output.write(image)
+        
 
         self.latestTimeStamp=rospy.Time.now()###should be the last thing that happens
         
