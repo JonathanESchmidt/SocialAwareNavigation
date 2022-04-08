@@ -274,9 +274,11 @@ class PeopleLocaliser():
         angle = None
         x = None
         y = None
-
+        peopledetections=[]
         for detection in detections:
-            if detection.ClassID == 0:#Only do this if its a person
+            if int(detection.ClassID) == 0:#Only do this if its a person7
+                peopledetections.append(detection)
+
                 person = Person()
 
                 distance, angle = self.findPosition(detection.Top, detection.Left, detection.Right, detection.Bottom, depth)
@@ -295,7 +297,7 @@ class PeopleLocaliser():
                 persons.append(person)
             
         
-        self.videoCreation(image, bool(len(persons)>0), detections, angle, distance, x, y)#give the current state to the video
+        self.videoCreation(image, bool(len(persons)>0), peopledetections, angle, distance, x, y)#give the current state to the video
         return persons
 
  
