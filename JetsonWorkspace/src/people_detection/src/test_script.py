@@ -222,7 +222,7 @@ class PeopleLocaliser():
             top=detection[0].Top
             bottom=detection[0].Bottom
             
-            with open(self.videoName + ".csv", 'a+', newline='') as csvfile:
+            with open(self.videoName + ".csv", 'a') as csvfile:
                 # creating a csv writer object
                 csvwriter = csv.writer(csvfile)
 
@@ -235,7 +235,7 @@ class PeopleLocaliser():
             cv2.putText(image, "Polar: " +str(round(angle, 2)) + "deg, " + str(round(distance, 2)) + "m", (10, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
             cv2.putText(image, "Cartesian: " +str(round(x, 2)) + "X, " + str(round(y, 2)) + "Y", (10, 200), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
         else:
-            with open(self.videoName + ".csv", 'a+', newline='') as csvfile:
+            with open(self.videoName + ".csv", 'a') as csvfile:
                 # creating a csv writer object
                 csvwriter = csv.writer(csvfile)
 
