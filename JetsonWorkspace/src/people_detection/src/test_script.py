@@ -126,6 +126,7 @@ class PeopleLocaliser():
     def depth_callback(self,depth):
         try:
             depth=self.bridge.imgmsg_to_cv2(depth, desired_encoding='passthrough')
+            self.plotDepth = cv2.cvtColor(depth, cv2.COLOR_BGRA2RGB)
             self.depth = np.array(depth, dtype=np.uint16)*0.001
         except:
             pass
@@ -315,7 +316,7 @@ class PeopleLocaliser():
                 persons.append(person)
             
         
-        self.videoCreation(image, bool(len(persons)>0), peopledetections, angle, distance, x, y)#give the current state to the video
+        self.videoCreation(self.plotDepth, bool(len(persons)>0), peopledetections, angle, distance, x, y)#give the current state to the video
         return persons
 
  
