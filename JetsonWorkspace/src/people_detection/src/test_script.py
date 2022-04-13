@@ -44,9 +44,13 @@ class PeopleLocaliser():
     -------
     TODO: Add description of methods
     """
-
+    ###
+        #https://github.com/IntelRealSense/librealsense/issues/2141
+        #hfov   54.732
+        #vfov   42.4115
+    ###.
     def __init__(self, networkname = "ssd-mobilenet-v2",
-                resolution = (640,480), threshold = 0.5, HFOV = np.radians(69.4),
+                resolution = (640,480), threshold = 0.5, HFOV = np.radians(54.732),
                 publishROS = True, peopleDetector = True, publishBB = False, 
                 video_name = "Testname.avi"):
         """
