@@ -181,11 +181,19 @@ class PeopleLocaliser():
 
         ##get distances of depth image assuming same resolution and allignment relative to bounding box coordinates
         
-        distBox = depth[int(left + (width/4)):int(right - (width/4)), int(top + (height/4)):int(bottom - (height/4))]
+        distBox = depth[int(left + (width/4)):int(right - (width/4)), int(top + (height/4)):int(bottom - (height/2))]
         distBox = distBox.flatten()
+
+        with open("Distbox.csv", 'a') as csvfile:
+                # creating a csv writer object
+                csvwriter = csv.writer(csvfile)
+
+                # writing the fields
+                csvwriter.writerow(distBox)
+
         distBox = np.delete(distBox, np.argwhere(distBox == 0))
 
-        distance = np.average(distBox)
+        distance = np.median(distBox)
 
         return distance, angleX
 
@@ -225,6 +233,11 @@ class PeopleLocaliser():
             right=detection[0].Right
             top=detection[0].Top
             bottom=detection[0].Bottom
+
+            width = right - left
+            height = bottom - top
+
+            cv2.rectangle(image, (int(left + (width/4)), int(top + (height/4))), (int(right - (width/4)), int(bottom - (height/2))), (0, 0, 255), 3)
             
             with open(self.videoName + ".csv", 'a') as csvfile:
                 # creating a csv writer object
