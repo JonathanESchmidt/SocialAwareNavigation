@@ -127,6 +127,7 @@ class PeopleLocaliser():
         try:
             depth=self.bridge.imgmsg_to_cv2(depth, desired_encoding='passthrough')
             self.plotDepth = cv2.cvtColor(np.array(depth,dtype=np.uint16),cv2.COLOR_GRAY2RGB)
+            rospy.loginfo("Depth Shape"+ str(self.plotDepth.shape()))
             self.depth = np.array(depth, dtype=np.uint16)*0.001
         except:
             pass
