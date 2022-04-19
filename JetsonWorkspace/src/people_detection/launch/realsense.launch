@@ -34,7 +34,7 @@
   <arg name="enable_sync"         default="true"/>
   <arg name="align_depth"         default="true"/>
 
-  <arg name="filters"             default="decimation"/>
+  <arg name="filters"             default="disparity,spatial,temporal,hole_filling,decimation"/>
 
   <group ns="$(arg camera)">
     <include file="$(find people_detection)/launch/includes/nodelet.launch.xml">
