@@ -183,7 +183,7 @@ class PeopleLocaliser():
 
 
         #Calculate Angle that specifies the X offset
-        angleX = math.arctan2(centreX,Id)
+        angleX = np.arctan2(centreX,Id)
 
 
         #distBox = depth[int(centreX-(width/4)):int(centreX+(width/4)), int(centreY-(height/4)):int(centreY+(height/4))]
