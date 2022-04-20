@@ -179,11 +179,11 @@ class PeopleLocaliser():
         Idx=np.sqrt((Id**2) + (centreX**2))
 
         #Calculate angle that specifies the Y offset
-        delta= np.atan2(centreY,Idx)
+        delta= np.arctan2(centreY,Idx)
 
 
         #Calculate Angle that specifies the X offset
-        angleX = math.atan2(centreX,Id)
+        angleX = math.arctan2(centreX,Id)
 
 
         #distBox = depth[int(centreX-(width/4)):int(centreX+(width/4)), int(centreY-(height/4)):int(centreY+(height/4))]
