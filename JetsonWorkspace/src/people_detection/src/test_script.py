@@ -174,23 +174,24 @@ class PeopleLocaliser():
         centreX = (self.resolutionX/2) - ((right + left)/2)
         centreY = (self.resolutionY/2) - ((top + bottom)/2)
 
-        #Construct fictional triangles to the BB position on the image plane
-        Id=(self.resolutionX/2)/np.tan(self.HFOV/2)
-        Idx=np.sqrt((Id**2) + (centreX**2))
+        #Length of the distance to the virtual image plane
+        Id = (self.resolutionX/2)/np.tan(self.HFOV/2)
+        #Length of the hypothenuse going towards the bb on the y=centrey plane
+        Idx = np.sqrt((Id**2) + (centreX**2))
 
-        #Calculate angle that specifies the Y offset
-        delta= np.arctan2(centreY,Idx)
+        #angle between Idx and the line going from the camera to the centre of the bb
+        delta = np.arctan2(centreY,Idx)
 
 
-        #Calculate Angle that specifies the X offset
-        angleX = np.arctan2(centreX,Id)
+        #Angle between idx and ID
+        gamma = np.arctan2(centreX,Id)
 
 
         #distBox = depth[int(centreX-(width/4)):int(centreX+(width/4)), int(centreY-(height/4)):int(centreY+(height/4))]
 
         ##get distances of depth image assuming same resolution and allignment relative to bounding box coordinates
         
-        distBox = depth[int(left + (width/4)):int(right - (width/4)), int(top + (height/4)):int(bottom - (height/2))]
+        distBox = depth[ int(top + (height/4)):int(bottom - (height/2)),int(left + (width/4)):int(right - (width/4))]
         distBox = distBox.flatten()
 
         with open("Distbox.csv", 'a') as csvfile:
@@ -202,13 +203,13 @@ class PeopleLocaliser():
 
         distBox = np.delete(distBox, np.argwhere(distBox == 0))
 
-        distance = np.median(distBox)
+        distance = np.nanmedian(distBox)
 
         #Projection to horizontal plane happening here
         distance = distance*np.cos(delta)
         #Output in polar coordinates such that angles to the left are positive and angles to the right are negative
         #Distance Forward is positiv backwards not possible
-        return distance, angleX
+        return distance, gamma
 
     def captureImages(self):    
         """
