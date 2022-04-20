@@ -27,6 +27,7 @@
 
   <!-- Load map -->
   <node name="map_server" pkg="map_server" type="map_server" args="$(arg env_map)"/>
+  <node pkg="tf" type="static_transform_publisher" name="robot_projector_link" args="0.0 0 1.3 -1.57 0 -1.57 base_link projector_top_plate_link 100" />
 
   <!-- Run move_base -->
   <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
