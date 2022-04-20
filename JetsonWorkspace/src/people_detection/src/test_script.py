@@ -169,14 +169,21 @@ class PeopleLocaliser():
         #TODO: calculate position correctly
         width = right - left
         height = bottom - top
+ 
+        #relative to the image center such that the distances are postive going left and upwards according to REP
+        centreX = (self.resolutionX/2) - ((right + left)/2)
+        centreY = (self.resolutionY/2) - ((top + bottom)/2)
 
-        #relative to the image center such that the distances are postive going right and upwards
-        centreX = ((right + left)/2) - (self.resolutionX/2)
-        #centreY = (self.resolutionY/2) - (height/2) not necessary since we dont care about z
+        #Construct fictional triangles to the BB position on the image plane
+        Id=(self.resolutionX/2)/np.tan(self.HFOV/2)
+        Idx=np.sqrt((Id**2) + (centreX**2))
 
-        ### calculate angle relative to the image center such that the angle is positive going to the right
-        #   This assumes that the camera is mounted exactly in the middle of the robot
-        angleX = math.atan((2*centreX*math.tan(self.HFOV/2))/self.resolutionX)
+        #Calculate angle that specifies the Y offset
+        delta= np.atan2(centreY,Idx)
+
+
+        #Calculate Angle that specifies the X offset
+        angleX = math.atan2(centreX,Id)
 
 
         #distBox = depth[int(centreX-(width/4)):int(centreX+(width/4)), int(centreY-(height/4)):int(centreY+(height/4))]
@@ -197,6 +204,10 @@ class PeopleLocaliser():
 
         distance = np.median(distBox)
 
+        #Projection to horizontal plane happening here
+        distance = distance*np.cos(delta)
+        #Output in polar coordinates such that angles to the left are positive and angles to the right are negative
+        #Distance Forward is positiv backwards not possible
         return distance, angleX
 
     def captureImages(self):    
@@ -308,7 +319,7 @@ class PeopleLocaliser():
                 person.velocity.y = 0
                 person.velocity.z = 0
                 x= np.cos(angle) * distance
-                y=- np.sin(angle) * distance 
+                y= np.sin(angle) * distance 
                 person.position.x = x # calculate cartesian coordinates
                 person.position.y = y
                 person.position.z = 0
