@@ -258,15 +258,15 @@ class PeopleLocaliser():
                     csvwriter = csv.writer(csvfile)
 
                     # writing the fields
-                    csvwriter.writerow([self.timestamp.to_nsec(), framerate, angle, distance, x, y, left, top, right, bottom])
+                    csvwriter.writerow([1, self.timestamp.to_nsec(), framerate, angle, distance, x, y, left, top, right, bottom])
             else:
                  with open(self.videoName + ".csv", 'a') as csvfile:
                     # creating a csv writer object
                     csvwriter = csv.writer(csvfile)
 
                     # writing the fields
-                    csvwriter.writerow(["timestamp", "framerate", "angle", "distance", "x-coord", "y-coord", "BBleft", "BBtop", "BBright", "BBbottom"])
-                    csvwriter.writerow([self.timestamp.to_nsec(), framerate, angle, distance, x, y, left, top, right, bottom])
+                    csvwriter.writerow(["detection", "timestamp", "framerate", "angle", "distance", "x-coord", "y-coord", "BBleft", "BBtop", "BBright", "BBbottom"])
+                    csvwriter.writerow([1, self.timestamp.to_nsec(), framerate, angle, distance, x, y, left, top, right, bottom])
                     self.csvCreated = True
             
 
@@ -282,15 +282,15 @@ class PeopleLocaliser():
                     csvwriter = csv.writer(csvfile)
 
                     # writing the fields
-                    csvwriter.writerow([self.timestamp.to_nsec(), framerate, None, None, None, None, None, None, None, None])
+                    csvwriter.writerow([0, self.timestamp.to_nsec(), framerate, None, None, None, None, None, None, None, None])
             else:
                 with open(self.videoName + ".csv", 'a') as csvfile:
                     # creating a csv writer object
                     csvwriter = csv.writer(csvfile)
 
                     # writing the fields
-                    csvwriter.writerow(["timestamp", "framerate", "angle", "distance", "x-coord", "y-coord", "BBleft", "BBtop", "BBright", "BBbottom"])
-                    csvwriter.writerow([self.timestamp.to_nsec(), framerate, None, None, None, None, None, None, None, None])
+                    csvwriter.writerow(["detection", "timestamp", "framerate", "angle", "distance", "x-coord", "y-coord", "BBleft", "BBtop", "BBright", "BBbottom"])
+                    csvwriter.writerow([0, self.timestamp.to_nsec(), framerate, None, None, None, None, None, None, None, None])
                     self.csvCreated = True
         
         cv2.putText(image, "FPS: " + str(round(framerate, 2)), (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
