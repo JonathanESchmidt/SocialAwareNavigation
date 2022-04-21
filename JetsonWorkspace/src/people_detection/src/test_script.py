@@ -7,7 +7,6 @@ import rospkg
 import jetson.inference
 import jetson.utils
 
-import argparse
 import sys
 
 from people_detection.msg import BoundingBox,BoundingBoxes
@@ -17,7 +16,6 @@ from sensor_msgs.msg import Image,CameraInfo
 from cv_bridge import CvBridge
 import cv2
 import numpy as np
-import math
 import csv
 
 class PeopleLocaliser():
