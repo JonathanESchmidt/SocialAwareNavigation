@@ -80,6 +80,7 @@ class PeopleLocaliser():
         self.videoName = video_name
         self.output = cv2.VideoWriter(
                             self.videoName, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), 10, (self.resolutionX, self.resolutionY))
+        self.csvCreated = False # Used for ensuring that header is written when creating csv
 
         self.HFOV = HFOV 
         self.threshold = threshold
@@ -194,12 +195,12 @@ class PeopleLocaliser():
         distBox = depth[ int(top + (height/4)):int(bottom - (height/2)),int(left + (width/4)):int(right - (width/4))]
         distBox = distBox.flatten()
 
-        with open("Distbox.csv", 'a') as csvfile:
-                # creating a csv writer object
-                csvwriter = csv.writer(csvfile)
+        # with open("Distbox.csv", 'a') as csvfile:
+        #         # creating a csv writer object
+        #         csvwriter = csv.writer(csvfile)
 
-                # writing the fields
-                csvwriter.writerow(distBox)
+        #         # writing the fields
+        #         csvwriter.writerow(distBox)
 
         distBox = np.delete(distBox, np.argwhere(distBox == 0))
 
@@ -253,13 +254,23 @@ class PeopleLocaliser():
 
             cv2.rectangle(image, (int(left + (width/4)), int(top + (height/4))), (int(right - (width/4)), int(bottom - (height/2))), (0, 0, 255), 3)
             
-            with open(self.videoName + ".csv", 'a') as csvfile:
-                # creating a csv writer object
-                csvwriter = csv.writer(csvfile)
+            if self.csvCreated: #test if csv is already created
+                with open(self.videoName + ".csv", 'a') as csvfile:
+                    # creating a csv writer object
+                    csvwriter = csv.writer(csvfile)
 
-                # writing the fields
-                csvwriter.writerow([self.timestamp.to_nsec(), framerate, angle, distance, x, y, left, top, right, bottom])
+                    # writing the fields
+                    csvwriter.writerow([self.timestamp.to_nsec(), framerate, angle, distance, x, y, left, top, right, bottom])
+            else:
+                 with open(self.videoName + ".csv", 'a') as csvfile:
+                    # creating a csv writer object
+                    csvwriter = csv.writer(csvfile)
+
+                    # writing the fields
+                    csvwriter.writerow(["timestamp", "framerate", "angle", "distance", "x-coord", "y-coord", "BBleft", "BBtop", "BBright", "BBbottom"])
+                    csvwriter.writerow([self.timestamp.to_nsec(), framerate, angle, distance, x, y, left, top, right, bottom])
             
+
             angle = np.degrees(angle)
 
             cv2.rectangle(image, (int(left), int(top)), (int(right), int(bottom)), (0, 255, 0), 3)
