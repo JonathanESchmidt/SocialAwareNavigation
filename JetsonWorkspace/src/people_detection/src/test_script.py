@@ -267,6 +267,7 @@ class PeopleLocaliser():
                     # writing the fields
                     csvwriter.writerow(["timestamp", "framerate", "angle", "distance", "x-coord", "y-coord", "BBleft", "BBtop", "BBright", "BBbottom"])
                     csvwriter.writerow([self.timestamp.to_nsec(), framerate, angle, distance, x, y, left, top, right, bottom])
+                    self.csvCreated = True
             
 
             angle = np.degrees(angle)
@@ -275,12 +276,22 @@ class PeopleLocaliser():
             cv2.putText(image, "Polar: " +str(round(angle, 2)) + "deg, " + str(round(distance, 2)) + "m", (10, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
             cv2.putText(image, "Cartesian: " +str(round(x, 2)) + "X, " + str(round(y, 2)) + "Y", (10, 150), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
         else:
-            with open(self.videoName + ".csv", 'a') as csvfile:
-                # creating a csv writer object
-                csvwriter = csv.writer(csvfile)
+            if self.csvCreated: #test if csv is already created
+                with open(self.videoName + ".csv", 'a') as csvfile:
+                    # creating a csv writer object
+                    csvwriter = csv.writer(csvfile)
 
-                # writing the fields
-                csvwriter.writerow([self.timestamp.to_nsec(), framerate, None, None, None, None, None, None, None, None])
+                    # writing the fields
+                    csvwriter.writerow([self.timestamp.to_nsec(), framerate, None, None, None, None, None, None, None, None])
+            else:
+                with open(self.videoName + ".csv", 'a') as csvfile:
+                    # creating a csv writer object
+                    csvwriter = csv.writer(csvfile)
+
+                    # writing the fields
+                    csvwriter.writerow(["timestamp", "framerate", "angle", "distance", "x-coord", "y-coord", "BBleft", "BBtop", "BBright", "BBbottom"])
+                    csvwriter.writerow([self.timestamp.to_nsec(), framerate, None, None, None, None, None, None, None, None])
+                    self.csvCreated = True
         
         cv2.putText(image, "FPS: " + str(round(framerate, 2)), (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
 
