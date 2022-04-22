@@ -50,7 +50,7 @@ class PeopleLocaliser():
     def __init__(self, networkname = "ssd-mobilenet-v2",
                 resolution = (640,480), threshold = 0.5, HFOV = np.radians(54.732),
                 publishROS = True, peopleDetector = True, publishBB = False, 
-                test_name = "Testname"):
+                video_name = "Testname.avi"):
         """
         Parameters
         ----------
@@ -75,7 +75,9 @@ class PeopleLocaliser():
         self.networkname = networkname
         self.resolutionX = resolution[0]
         self.resolutionY = resolution[1]
-        self.testName = test_name
+        self.videoName = video_name
+        self.output = cv2.VideoWriter(
+                            self.videoName, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), 10, (self.resolutionX, self.resolutionY))
         self.csvCreated = False # Used for ensuring that header is written when creating csv
 
         self.HFOV = HFOV 
@@ -123,6 +125,8 @@ class PeopleLocaliser():
     def depth_callback(self,depth):
         try:
             depth=self.bridge.imgmsg_to_cv2(depth, desired_encoding='passthrough')
+            self.plotDepth = cv2.cvtColor(np.array(depth,dtype=np.uint8),cv2.COLOR_GRAY2RGB)
+            rospy.loginfo("Depth Shape"+ str(self.plotDepth.shape))
             self.depth = np.array(depth, dtype=np.float32)*0.001
         except:
             pass
@@ -220,7 +224,7 @@ class PeopleLocaliser():
     def initdetectNet(self):
         self.net = jetson.inference.detectNet(self.networkname, sys.argv, self.threshold)
 
-    def csvCreation(self, containsperson, detection , angle, distance,x,y):
+    def videoCreation(self, image, containsperson, detection , angle, distance,x,y):
         """
         BRIEF
         --------------
@@ -231,6 +235,8 @@ class PeopleLocaliser():
         Angle
         Cartesian Coordinates
         Flag if contains person
+
+
         """
 
         framerate = 1/(rospy.Time.now().to_sec()-self.timestamp.to_sec())# 1/calculationtime
@@ -240,16 +246,21 @@ class PeopleLocaliser():
             right=detection[0].Right
             top=detection[0].Top
             bottom=detection[0].Bottom
+
+            width = right - left
+            height = bottom - top
+
+            cv2.rectangle(image, (int(left + (width/4)), int(top + (height/4))), (int(right - (width/4)), int(bottom - (height/2))), (0, 0, 255), 3)
             
             if self.csvCreated: #test if csv is already created
-                with open(self.testName + ".csv", 'a') as csvfile:
+                with open(self.videoName + ".csv", 'a') as csvfile:
                     # creating a csv writer object
                     csvwriter = csv.writer(csvfile)
 
                     # writing the fields
                     csvwriter.writerow([1, self.timestamp.to_nsec(), framerate, angle, distance, x, y, left, top, right, bottom, self.count])
             else:
-                 with open(self.testName + ".csv", 'a') as csvfile:
+                 with open(self.videoName + ".csv", 'a') as csvfile:
                     # creating a csv writer object
                     csvwriter = csv.writer(csvfile)
 
@@ -257,26 +268,35 @@ class PeopleLocaliser():
                     csvwriter.writerow(["detection", "timestamp", "framerate", "angle", "distance", "x-coord", "y-coord", "BBleft", "BBtop", "BBright", "BBbottom", "iteration"])
                     csvwriter.writerow([1, self.timestamp.to_nsec(), framerate, angle, distance, x, y, left, top, right, bottom, self.count])
                     self.csvCreated = True
+            
 
             angle = np.degrees(angle)
 
+            cv2.rectangle(image, (int(left), int(top)), (int(right), int(bottom)), (0, 255, 0), 3)
+            cv2.putText(image, "Polar: " +str(round(angle, 2)) + "deg, " + str(round(distance, 2)) + "m", (10, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+            cv2.putText(image, "Cartesian: " +str(round(x, 2)) + "X, " + str(round(y, 2)) + "Y", (10, 150), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
         else:
             if self.csvCreated: #test if csv is already created
-                with open(self.testName + ".csv", 'a') as csvfile:
+                with open(self.videoName + ".csv", 'a') as csvfile:
                     # creating a csv writer object
                     csvwriter = csv.writer(csvfile)
 
                     # writing the fields
                     csvwriter.writerow([0, self.timestamp.to_nsec(), framerate, None, None, None, None, None, None, None, None, self.count])
             else:
-                with open(self.testName + ".csv", 'a') as csvfile:
+                with open(self.videoName + ".csv", 'a') as csvfile:
                     # creating a csv writer object
                     csvwriter = csv.writer(csvfile)
 
                     # writing the fields
                     csvwriter.writerow(["detection", "timestamp", "framerate", "angle", "distance", "x-coord", "y-coord", "BBleft", "BBtop", "BBright", "BBbottom", "iteration"])
                     csvwriter.writerow([0, self.timestamp.to_nsec(), framerate, None, None, None, None, None, None, None, None, self.count])
-                    self.csvCreated = True      
+                    self.csvCreated = True
+        
+        cv2.putText(image, "FPS: " + str(round(framerate, 2)), (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
+
+        self.output.write(image)
+        
 
         self.latestTimeStamp=rospy.Time.now()###should be the last thing that happens
         
@@ -297,6 +317,7 @@ class PeopleLocaliser():
 
         cudaimage = cv2.cvtColor(image, cv2.COLOR_BGRA2RGBA).astype(np.float32)#converting the image to a cuda compatible image
         cudaimage = jetson.utils.cudaFromNumpy(cudaimage)
+        image = cv2.cvtColor(image, cv2.COLOR_BGRA2RGB)
 
         detections = self.net.Detect(cudaimage, cudaimage.shape[1], cudaimage.shape[0])#returning the detected objects
         persons = []
@@ -328,7 +349,7 @@ class PeopleLocaliser():
                 persons.append(person)
             
         
-        self.csvCreation(bool(len(persons)>0), peopledetections, angle, distance, x, y)#give the current state to the csv
+        self.videoCreation(self.plotDepth, bool(len(persons)>0), peopledetections, angle, distance, x, y)#give the current state to the video
         return persons
 
  
@@ -394,12 +415,12 @@ if __name__ == "__main__":
     #get path of the weights from rospkg so we can use it relative
     rospack = rospkg.RosPack()
 
-    testName = "test_"+str(sys.argv[1])
+    vidName = "testvideo_"+str(sys.argv[1])+".avi"
 
     rospy.init_node('people_detection')
     r = rospy.Rate(10) # 10hz
 
-    detector = PeopleLocaliser(test_name=testName)
+    detector = PeopleLocaliser(video_name=vidName)
 
     # while not rospy.is_shutdown():
     #for i in range(50):
@@ -407,3 +428,5 @@ if __name__ == "__main__":
     while (detector.count<100):
         if (detector.findPeople()): detector.count=detector.count+1
         #r.sleep()
+
+    detector.output.release()
