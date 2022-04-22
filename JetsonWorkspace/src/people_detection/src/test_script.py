@@ -160,8 +160,7 @@ class PeopleLocaliser():
         angle : float
             angle to the centre of the bounding box of the person
         """
-        rospy.loginfo("Entered findPosition")
-        #TODO: calculate position correctly
+
         width = right - left
         height = bottom - top
  
@@ -177,24 +176,12 @@ class PeopleLocaliser():
         #angle between Idx and the line going from the camera to the centre of the bb
         delta = np.arctan2(centreY,Idx)
 
-
         #Angle between idx and ID
         gamma = np.arctan2(centreX,Id)
 
-
-        #distBox = depth[int(centreX-(width/4)):int(centreX+(width/4)), int(centreY-(height/4)):int(centreY+(height/4))]
-
         ##get distances of depth image assuming same resolution and allignment relative to bounding box coordinates
-        
         distBox = depth[ int(top + (height/4)):int(bottom - (height/2)),int(left + (width/4)):int(right - (width/4))]
         distBox = distBox.flatten()
-
-        # with open("Distbox.csv", 'a') as csvfile:
-        #         # creating a csv writer object
-        #         csvwriter = csv.writer(csvfile)
-
-        #         # writing the fields
-        #         csvwriter.writerow(distBox)
 
         distBox = np.delete(distBox, np.argwhere(distBox == 0))
 
@@ -214,13 +201,12 @@ class PeopleLocaliser():
         return self.rgb, self.depth
 
     def getClass(self, Index):
-        rospy.loginfo("Entered getClass")
         return self.labels[Index]#in case there is no function otherwise overwrite
 
     def initdetectNet(self):
         self.net = jetson.inference.detectNet(self.networkname, sys.argv, self.threshold)
 
-    def csvCreation(self, containsperson, detection , angle, distance,x,y):
+    def csvCreation(self, containsperson, detection , angle, distance, x, y):
         """
         BRIEF
         --------------
@@ -292,8 +278,6 @@ class PeopleLocaliser():
         people : people_msgs/Person[]
             array of persons
         """
-        rospy.loginfo("Entered detectSSD")
-
 
         cudaimage = cv2.cvtColor(image, cv2.COLOR_BGRA2RGBA).astype(np.float32)#converting the image to a cuda compatible image
         cudaimage = jetson.utils.cudaFromNumpy(cudaimage)
@@ -306,8 +290,7 @@ class PeopleLocaliser():
         y = None
         peopledetections=[]
         for detection in detections:
-            #rospy.loginfo(str(detection))
-            if int(detection.ClassID) == 1:#Only do this if its a person7
+            if int(detection.ClassID) == 1:#Only do this if its a person
                 peopledetections.append(detection)
 
                 person = Person()
@@ -326,7 +309,6 @@ class PeopleLocaliser():
 
                 person.reliability = detection.Confidence
                 persons.append(person)
-            
         
         self.csvCreation(bool(len(persons)>0), peopledetections, angle, distance, x, y)#give the current state to the csv
         return persons
@@ -343,7 +325,6 @@ class PeopleLocaliser():
         timestamp : rospy.rostime.Time
             the time stamp of when the picture has been taken
         """
-        rospy.loginfo("Entered rosPeoplemsg")
 
         if len(persons)>0: #If we detected at least one person update the timestamp of the latest succesful detection
             self.latestTimeStamp=self.timestamp
@@ -365,8 +346,6 @@ class PeopleLocaliser():
             an array of all detections
         """
 
-        rospy.loginfo("Entered rosBBmsg")
-
         Boxes = BoundingBoxes()
         Box = BoundingBox()
         Index = 0
@@ -385,11 +364,6 @@ class PeopleLocaliser():
         Boxes.header.stamp = rospy.Time.now()
         self.bbPub.publish(Boxes)
 
-    def __del__(self):
-        print("Detector destroyed")
-        #cv2.destroyAllWindows()
-        self.output.release()
-
 if __name__ == "__main__":
     #get path of the weights from rospkg so we can use it relative
     rospack = rospkg.RosPack()
@@ -402,8 +376,8 @@ if __name__ == "__main__":
     detector = PeopleLocaliser(test_name=testName)
 
     # while not rospy.is_shutdown():
-    #for i in range(50):
     detector.count = 0
     while (detector.count<100):
         if (detector.findPeople()): detector.count=detector.count+1
         #r.sleep()
+        rospy.loginfo("Iteration " + str(detector.count))
