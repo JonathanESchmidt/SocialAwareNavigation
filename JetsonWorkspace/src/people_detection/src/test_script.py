@@ -91,7 +91,7 @@ class PeopleLocaliser():
         self.bridge = CvBridge()
         self.rgb=None
         self.depth=None
-
+        self.lastperson = Person()
         self.peoplePub = rospy.Publisher('people', People , queue_size=10)
         if self.publishROSmsg: #only init publisher if necessary
             self.bbPub = rospy.Publisher('BoundingBoxes', BoundingBoxes, queue_size=10)
@@ -296,19 +296,29 @@ class PeopleLocaliser():
                 person = Person()
 
                 distance, angle = self.findPosition(detection.Top, detection.Left, detection.Right, detection.Bottom, depth)
+
+                deltat=(self.timestamp.to_sec()-self.latestTimeStamp.to_sec())
                 person.name = "Bob"
                 ##Assuming semi static people
-                person.velocity.x = 0
-                person.velocity.y = 0
-                person.velocity.z = 0
                 x= np.cos(angle) * distance
                 y= np.sin(angle) * distance 
                 person.position.x = x # calculate cartesian coordinates
                 person.position.y = y
                 person.position.z = 0
 
+                if not deltat==0:#aproximate velocity based on the last two positions and their time difference
+                    #works only for one person in the scene otherwise use hungarian algorithm or simillar
+                    person.velocity.x = (x-self.lastperson.position.x)/deltat
+                    person.velocity.y = (y-self.lastperson.position.y)/deltat
+                    person.velocity.z = 0
+                else:#first detection cannot have velocities yet since it is lacking behind
+                    person.velocity.x = 0
+                    person.velocity.y = 0
+                    person.velocity.z = 0
+
                 person.reliability = detection.Confidence
                 persons.append(person)
+                self.lastperson=person#safe last person detection
         
         self.csvCreation(bool(len(persons)>0), peopledetections, angle, distance, x, y)#give the current state to the csv
         return persons
