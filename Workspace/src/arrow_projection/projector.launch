@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- Launch file for the projector -->
+
+
+    <!-- For calibration profile and pose of the projector -->
+	<include file="$(find arrow_projection)/launch/arrow_projection.launch"/>
+
+    <!-- The actual arrow projection - probably not in use at the moment: Might be able to be left out -->
+    <node name="path_projection_node" pkg="arrow_projection" type="path_projection_node" respawn="true"/>
+
+    <!-- Argument for opening Rviz -->
+    <arg name="open_rviz" default="true"/>
+
+    <group if="$(arg open_rviz)">
+        <!-- Rviz environment for depicting the path -->
+        <node name="rviz" pkg="rviz" type="rviz" args="-d $(find arrow_projection)/rviz/path_projection.rviz"/>
+    </group>
+
+    <!-- Displaying Rviz camera image for projector -->
+    <node name="image_view" pkg="image_view" type="image_view" args="image:=/projector/image"/>
+
+</launch>
