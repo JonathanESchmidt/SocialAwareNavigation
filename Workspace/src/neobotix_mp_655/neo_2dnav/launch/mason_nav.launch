@@ -78,7 +78,7 @@
 
   <!-- RViz -->
   <group if="$(arg open_rviz)">
-    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find neo_2dnav)/rviz/neo_navigation.rviz"/>
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find arrow_projection)/rviz/MASON.rviz"/>
   </group>
 
   <!-- Displaying Rviz camera image for projector -->

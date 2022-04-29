@@ -12,7 +12,7 @@
   </include>
 
   <!-- Arguments -->
-  <arg name="open_rviz" default="true"/>
+  <arg name="open_rviz" default="false"/>
   <arg name="enable_teleop" default="true"/>
 
   <!-- Set local planner to use: std or teb -->
