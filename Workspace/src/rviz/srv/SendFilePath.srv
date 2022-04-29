@@ -1,3 +1,0 @@
-std_msgs/String path # absolute path to file or directory
----
-bool success
