@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- THIS WILL NOT RUN WITHOUT A MAP ! -->
+  <!-- REPLACE THIS LINE WITH PATH TO MAP, ONCE IT IS MADE USING nav2dslam.launch -->
+  <arg name="map_name" default="map_name.yaml" />
+  <arg name="env_map" default="$(find neo_bringup)/maps/$(arg map_name)" />
+  <arg name="sim" default="false"/>
+  <arg name="debug" default="false"/>
+
+   <!-- Neobotix -->
+  <include file="$(find neo_bringup)/launch/bringup_mp_655_remote.launch">
+  </include>
+
+  <!-- Arguments -->
+  <arg name="open_rviz" default="true"/>
+  <arg name="enable_teleop" default="true"/>
+
+  <!-- Set local planner to use: std or teb -->
+  <arg name="local_planner" default="teb"/>
+
+  <!--- Run AMCL -->
+  <group unless="$(arg sim)">
+    <remap from="/scan" to="/laser_unified/scan" />
+    <!--remap from="/scan" to="/scan_front/scan" /-->
+    <include file="$(find neo_2dnav)/launch/amcl_diff.launch" />
+  </group>
+
+  <!-- Load map -->
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg env_map)"/>
+  <node pkg="tf" type="static_transform_publisher" name="robot_projector_link" args="0.0 0 1.3 -1.57 0 -1.57 base_link projector_top_plate_link 100" />
+
+  <!-- Run move_base -->
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+    <!-- Set local planner -->
+    <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS"/>
+    <!-- TODO: maybe switch from navfn to global_planner -->
+    <param name="base_global_planner" value="global_planner/GlobalPlanner"/>
+    <!-- base_global_planner: "navfn/NavfnROS" -->
+
+    <!-- Set controller frequency -->
+    <!-- The rate in Hz at which to run the control loop and send velocity commands to the base.
+         10 Hz seems suitable for the TEB local planner, maybe lower.
+         20+ seems better for DWA/TR. Default: 20 -->
+    <param name="controller_frequency" value="10.0"/>
+
+    <!-- Set planner frequency -->
+    <!-- The rate in Hz at which to run the global planning loop.
+         If the frequency is set to 0.0, the global planner will
+         only run when a new goal is received or the local planner
+         reports that its path is blocked. Default: 0.0 -->
+    <!-- <param name="planner_frequency" value="1.0"/> -->
+
+    <!-- Load costmap configurations -->
+    <!-- Common parameters -->
+    <rosparam file="$(find neo_2dnav)/config/costmap_common.yaml" command="load" ns="local_costmap" />  <!-- Local -->
+    <rosparam file="$(find neo_2dnav)/config/costmap_common.yaml" command="load" ns="global_costmap" /> <!-- Global -->
+    <!-- Sensors for the local costmap -->
+    <rosparam file="$(find neo_2dnav)/config/sensors.yaml" command="load" ns="local_costmap" unless="$(arg sim)"/>
+    <!-- Local and global costmap parameters -->
+    <rosparam file="$(find neo_2dnav)/config/costmap_local.yaml" command="load" unless="$(arg sim)"/>
+    <rosparam file="$(find neo_2dnav)/config/costmap_local_sim.yaml" command="load" if="$(arg sim)"/>
+    <rosparam file="$(find neo_2dnav)/config/costmap_global.yaml" command="load" />
+
+    <!-- Load local planner configuration -->
+    <rosparam file="$(find neo_2dnav)/config/planner_local_$(arg local_planner).yaml" command="load" />
+  </node>
+
+  <!-- Teleoperation with Logitech joypad -->
+  <group if="$(arg enable_teleop)">
+    <include file="$(find neo_teleop)/launch/teleop.launch" />
+  </group>
+
+  <!-- For calibration profile and pose of the projector -->
+	<include file="$(find arrow_projection)/launch/arrow_projection.launch"/>
+
+  <!-- The actual arrow projection - probably not in use at the moment: Might be able to be left out -->
+  <node name="path_projection_node" pkg="arrow_projection" type="path_projection_node" respawn="true"/>
+
+  <!-- RViz -->
+  <group if="$(arg open_rviz)">
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find neo_2dnav)/rviz/neo_navigation.rviz"/>
+  </group>
+
+  <!-- Displaying Rviz camera image for projector -->
+  <node name="image_view" pkg="image_view" type="image_view" args="image:=/projector/image"/>
+
+</launch>
