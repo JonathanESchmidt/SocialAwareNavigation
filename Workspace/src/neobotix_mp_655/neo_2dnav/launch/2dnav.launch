@@ -34,7 +34,7 @@
     <!-- Set local planner -->
     <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS"/>
     <!-- TODO: maybe switch from navfn to global_planner -->
-    <!-- <param name="base_global_planner" value="global_planner/GlobalPlanner"/> -->
+    <param name="base_global_planner" value="global_planner/GlobalPlanner"/>
     <!-- base_global_planner: "navfn/NavfnROS" -->
 
     <!-- Set controller frequency -->
