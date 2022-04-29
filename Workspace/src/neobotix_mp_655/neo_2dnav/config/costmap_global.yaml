@@ -22,6 +22,8 @@ global_costmap:
                             # in the middle of areas, instead of going very close to objects and walls.
                             # The robot can still go through narrow areas, just at a higher cost, so it
                             # may find a longer and more open route.
+  social_layer/covariance: 0.929 # ROB864
+  social_layer/amplitude: 110.0 # ROB864
 
   plugins:
      - {name: static_map,       type: "costmap_2d::StaticLayer"}

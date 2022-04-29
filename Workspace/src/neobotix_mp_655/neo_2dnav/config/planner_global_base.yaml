@@ -1,0 +1,5 @@
+base_global_planner: global_planner/GlobalPlanner
+
+GlobalPlanner:
+  neutral_cost: 50 # Leave default values as it might not be able to find a path
+                   # through narrow corridors.
