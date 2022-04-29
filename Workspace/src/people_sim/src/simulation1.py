@@ -26,7 +26,7 @@ if __name__ == "__main__":
     r = rospy.Rate(5) # 5hz
 
     # Declare all the humans that will be generated
-    human1 = BasicPerson('bob', -2, 2, 0, 0.0, 0.0, 0, 0.0, stay_put)
+    human1 = BasicPerson('bob', -3, 2, 0, 0.0, 0.0, 0, 0.0, stay_put)
 
     humans = [human1]
 
@@ -42,3 +42,7 @@ if __name__ == "__main__":
 
         peoplePub.publish(people) # Publish human locations
         rospy.sleep(0.5)
+    
+    print ("Gracefull exit.")
+    people.people = []
+    peoplePub.publish(people) # Publish human locations

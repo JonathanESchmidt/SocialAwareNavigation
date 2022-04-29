@@ -63,6 +63,9 @@
 
     <!-- Load local planner configuration -->
     <rosparam file="$(find neo_2dnav)/config/planner_local_$(arg local_planner).yaml" command="load" />
+
+    <!-- Load global planner configuration -->
+    <rosparam file="$(find neo_2dnav)/config/planner_global_base.yaml" command="load" />
   </node>
 
   <!-- Teleoperation with Logitech joypad -->
