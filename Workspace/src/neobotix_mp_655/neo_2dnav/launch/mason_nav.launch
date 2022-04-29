@@ -48,7 +48,7 @@
          If the frequency is set to 0.0, the global planner will
          only run when a new goal is received or the local planner
          reports that its path is blocked. Default: 0.0 -->
-    <!-- <param name="planner_frequency" value="1.0"/> -->
+    <param name="planner_frequency" value="2.0"/>
 
     <!-- Load costmap configurations -->
     <!-- Common parameters -->
