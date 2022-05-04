@@ -387,7 +387,7 @@ if __name__ == "__main__":
 
     # while not rospy.is_shutdown():
     detector.count = 0
-    while (detector.count<100):
+    while (detector.count<1000):
         if (detector.findPeople()): detector.count=detector.count+1
         #r.sleep()
         rospy.loginfo("Iteration " + str(detector.count))
