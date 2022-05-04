@@ -12,8 +12,8 @@ local_costmap:
                             # ros::Time::now(), then the navigation stack will stop the robot. Default: 0.2
 
   # Rate parameters
-  update_frequency: 10.0    # The frequency in Hz for the map to be updated. Default 5.0
-  publish_frequency: 10.0   # The frequency in Hz for the map to be publish display information. Default: 0.0
+  update_frequency: 3.0    # The frequency in Hz for the map to be updated. Default 5.0
+  publish_frequency: 3.0   # The frequency in Hz for the map to be publish display information. Default: 0.0
 
   #static_map: true
 

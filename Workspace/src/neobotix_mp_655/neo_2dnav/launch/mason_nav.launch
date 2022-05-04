@@ -41,7 +41,7 @@
     <!-- The rate in Hz at which to run the control loop and send velocity commands to the base.
          10 Hz seems suitable for the TEB local planner, maybe lower.
          20+ seems better for DWA/TR. Default: 20 -->
-    <param name="controller_frequency" value="10.0"/>
+    <param name="controller_frequency" value="5.0"/>
 
     <!-- Set planner frequency -->
     <!-- The rate in Hz at which to run the global planning loop.

@@ -11,14 +11,14 @@ global_costmap:
                             # and robot_base_frame parameters is transform_tolerance seconds older than
                             # ros::Time::now(), then the navigation stack will stop the robot. Default: 0.2
   # Rate parameters
-  update_frequency: 10     # The frequency in Hz for the map to be updated. Default 5.0
-  publish_frequency: 10    # The frequency in Hz for the map to be publish display information. Default: 0.0
+  update_frequency: 3     # The frequency in Hz for the map to be updated. Default 5.0
+  publish_frequency: 3    # The frequency in Hz for the map to be publish display information. Default: 0.0
 
   static_map: true
 
   # Inflation layer
   # cost_scaling_factor: 10.0 # Default: 10.0
-  inflation_radius: 1.5     # A high inflation radius in the global costmap helps the robot go more
+  inflation_radius: 0.5     # A high inflation radius in the global costmap helps the robot go more
                             # in the middle of areas, instead of going very close to objects and walls.
                             # The robot can still go through narrow areas, just at a higher cost, so it
                             # may find a longer and more open route.
