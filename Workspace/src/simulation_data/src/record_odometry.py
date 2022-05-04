@@ -11,7 +11,7 @@ def callback(data):
     #print ("heard "+str(data.pose.pose.position.x))
     #print ("heard "+str(data.header.stamp.secs))
     csvwriter.writerow([str(data.header.stamp.secs), str(data.header.stamp.nsecs), str(data.pose.pose.position.x), str(float(data.pose.pose.position.y)+10.0)])
-    print (str(data.header.stamp.secs) + str(data.header.stamp.nsecs) + str(data.pose.pose.position.x) + str(float(data.pose.pose.position.y)+10.0))
+    print (str(data.header.stamp.secs) + " "+str(data.header.stamp.nsecs) + " "+str(data.pose.pose.position.x) + " "+str(float(data.pose.pose.position.y)+10.0))
 
 def listener():
 

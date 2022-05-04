@@ -1,5 +1,7 @@
 <launch>
   <node pkg="amcl" type="amcl" name="amcl" output="screen">
+    <param name="initial_pose_x" value="-2.0"/>
+    <param name="initial_pose_y" value="2.0"/>
     <param name="odom_model_type" value="diff"/>
     <param name="odom_frame_id" value="odom"/>
 
