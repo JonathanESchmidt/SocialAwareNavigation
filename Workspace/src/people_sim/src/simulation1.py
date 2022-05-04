@@ -26,7 +26,7 @@ if __name__ == "__main__":
     r = rospy.Rate(5) # 5hz
 
     # Declare all the humans that will be generated
-    human1 = BasicPerson('bob', -5, 1, 0, 0.0, 0.0, 0, 0.0, stay_put)
+    human1 = BasicPerson('bob', 2, 1, 0, 0.0, 0.0, 0, 0.0, stay_put)
 
     humans = [human1]
 
