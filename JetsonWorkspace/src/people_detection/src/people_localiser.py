@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
 from cmath import sin
+from turtle import right
 import rospy
 import rospkg
 import jetson.inference
 import jetson.utils
 
-import argparse
 import sys
 
 from people_detection.msg import BoundingBox,BoundingBoxes
@@ -16,7 +16,7 @@ from sensor_msgs.msg import Image,CameraInfo
 from cv_bridge import CvBridge
 import cv2
 import numpy as np
-import math
+import csv
 
 class PeopleLocaliser():
     """
@@ -42,9 +42,13 @@ class PeopleLocaliser():
     -------
     TODO: Add description of methods
     """
-
+    ###
+        #https://github.com/IntelRealSense/librealsense/issues/2141
+        #hfov   54.732
+        #vfov   42.4115
+    ###.
     def __init__(self, networkname = "ssd-mobilenet-v2",
-                resolution = (640,480), threshold = 0.5, HFOV = np.radians(69.4),
+                resolution = (640,480), threshold = 0.5, HFOV = np.radians(54.732),
                 publishROS = True, peopleDetector = True, publishBB = False):
         """
         Parameters
@@ -70,19 +74,21 @@ class PeopleLocaliser():
         self.networkname = networkname
         self.resolutionX = resolution[0]
         self.resolutionY = resolution[1]
+
         self.HFOV = HFOV 
         self.threshold = threshold
         self.publishROSmsg = publishROS
         self.publishBB = publishBB
         self.peopleDetector = peopleDetector
         self.detections = None
-        self.timestamp = None
-        self.latestTimeStamp = None
+        self.timestamp = rospy.Time.now()
+        self.latestTimeStamp = rospy.Time.now()
+        self.Counter = 0
         self.peopleKeepTime = 5 ##Seconds How long to keep detected people after not detecting them anymore
         self.bridge = CvBridge()
         self.rgb=None
         self.depth=None
-
+        self.lastperson = Person()
         self.peoplePub = rospy.Publisher('people', People , queue_size=10)
         if self.publishROSmsg: #only init publisher if necessary
             self.bbPub = rospy.Publisher('BoundingBoxes', BoundingBoxes, queue_size=10)
@@ -114,7 +120,7 @@ class PeopleLocaliser():
     def depth_callback(self,depth):
         try:
             depth=self.bridge.imgmsg_to_cv2(depth, desired_encoding='passthrough')
-            self.depth = np.array(depth, dtype=np.uint16)*0.001
+            self.depth = np.array(depth, dtype=np.float32)*0.001
         except:
             pass
     
@@ -124,7 +130,7 @@ class PeopleLocaliser():
         """
 
         self.timestamp = rospy.Time.now()
-        frameid = 'baselink' #Stand-in until added to capture image
+        frameid = 'base_link' #Stand-in until added to capture image
         colour, depth = self.captureImages()
 
         #Check if there is images available
@@ -133,6 +139,8 @@ class PeopleLocaliser():
                 people = self.detectSSD(colour, depth)
         
             self.rosPeoplemsg(people, frameid, self.timestamp)
+            return True
+        else: return False
         
     def findPosition(self, top, left, right, bottom, depth):
         """
@@ -149,34 +157,38 @@ class PeopleLocaliser():
         angle : float
             angle to the centre of the bounding box of the person
         """
-        rospy.loginfo("Entered findPosition")
-        #TODO: calculate position correctly
+
         width = right - left
         height = bottom - top
+ 
+        #relative to the image center such that the distances are postive going left and upwards according to REP
+        centreX = (self.resolutionX/2) - ((right + left)/2)
+        centreY = (self.resolutionY/2) - ((top + bottom)/2)
 
-        #relative to the image center such that the distances are postive going right and upwards
-        centreX = ((right + left)/2) - (self.resolutionX/2)
-        #centreY = (self.resolutionY/2) - (height/2) not necessary since we dont care about z
+        #Length of the distance to the virtual image plane
+        Id = (self.resolutionX/2)/np.tan(self.HFOV/2)
+        #Length of the hypothenuse going towards the bb on the y=centrey plane
+        Idx = np.sqrt((Id**2) + (centreX**2))
 
-        ### calculate angle relative to the image center such that the angle is positive going to the right
-        #   This assumes that the camera is mounted exactly in the middle of the robot
-        angleX = math.atan((2*centreX*math.tan(self.HFOV/2))/self.resolutionX)
+        #angle between Idx and the line going from the camera to the centre of the bb
+        delta = np.arctan2(centreY,Idx)
 
-
-        #distBox = depth[int(centreX-(width/4)):int(centreX+(width/4)), int(centreY-(height/4)):int(centreY+(height/4))]
+        #Angle between idx and ID
+        gamma = np.arctan2(centreX,Id)
 
         ##get distances of depth image assuming same resolution and allignment relative to bounding box coordinates
-        
-        distBox = depth[int(left + (width/4)):int(right - (width/4)), int(top + (height/4)):int(bottom - (height/4))]
+        distBox = depth[ int(top + (height/4)):int(bottom - (height/2)),int(left + (width/4)):int(right - (width/4))]
         distBox = distBox.flatten()
+
         distBox = np.delete(distBox, np.argwhere(distBox == 0))
 
-        distance = np.average(distBox)
+        distance = np.nanmedian(distBox)
 
-        
-
-
-        return distance, angleX
+        #Projection to horizontal plane happening here
+        distance = distance*np.cos(delta)
+        #Output in polar coordinates such that angles to the left are positive and angles to the right are negative
+        #Distance Forward is positiv backwards not possible
+        return distance, gamma
 
     def captureImages(self):    
         """
@@ -186,12 +198,11 @@ class PeopleLocaliser():
         return self.rgb, self.depth
 
     def getClass(self, Index):
-        rospy.loginfo("Entered getClass")
         return self.labels[Index]#in case there is no function otherwise overwrite
 
     def initdetectNet(self):
         self.net = jetson.inference.detectNet(self.networkname, sys.argv, self.threshold)
-        
+
     def detectSSD(self, image, depth):#this is very specific to the network architecture so pass
         """
         Parameters
@@ -204,31 +215,47 @@ class PeopleLocaliser():
         people : people_msgs/Person[]
             array of persons
         """
-        rospy.loginfo("Entered detectSSD")
 
-        image = cv2.cvtColor(image, cv2.COLOR_BGRA2RGBA).astype(np.float32)#converting the image to a cuda compatible image
-        image = jetson.utils.cudaFromNumpy(image)
+        cudaimage = cv2.cvtColor(image, cv2.COLOR_BGRA2RGBA).astype(np.float32)#converting the image to a cuda compatible image
+        cudaimage = jetson.utils.cudaFromNumpy(cudaimage)
 
-        detections = self.net.Detect(image, image.shape[1], image.shape[0])#returning the detected objects
+        detections = self.net.Detect(cudaimage, cudaimage.shape[1], cudaimage.shape[0])#returning the detected objects
         persons = []
-
+        distance = None
+        angle = None
+        x = None
+        y = None
+        peopledetections=[]
         for detection in detections:
-            person = Person()
+            if int(detection.ClassID) == 1:#Only do this if its a person
+                peopledetections.append(detection)
 
-            distance, angle = self.findPosition(detection.Top, detection.Left, detection.Right, detection.Bottom, depth)
-            person.name = "Bob"
-            ##Assuming semi static people
-            person.velocity.x = 0
-            person.velocity.y = 0
-            person.velocity.z = 0
+                person = Person()
 
-            person.position.x = np.cos(angle) * distance # calculate cartesian coordinates
-            person.position.y = - np.sin(angle) * distance
-            person.position.z = 0
+                distance, angle = self.findPosition(detection.Top, detection.Left, detection.Right, detection.Bottom, depth)
 
-            person.reliability = detection.Confidence
-            persons.append(person)
+                deltat=(self.timestamp.to_sec()-self.latestTimeStamp.to_sec())
+                person.name = "Bob"
+                ##Assuming semi static people
+                x= np.cos(angle) * distance
+                y= np.sin(angle) * distance 
+                person.position.x = x # calculate cartesian coordinates
+                person.position.y = y
+                person.position.z = 0
 
+                if not deltat==0:#aproximate velocity based on the last two positions and their time difference
+                    #works only for one person in the scene otherwise use hungarian algorithm or simillar
+                    person.velocity.x = (x-self.lastperson.position.x)/deltat
+                    person.velocity.y = (y-self.lastperson.position.y)/deltat
+                    person.velocity.z = 0
+                else:#first detection cannot have velocities yet since it is lacking behind
+                    person.velocity.x = 0
+                    person.velocity.y = 0
+                    person.velocity.z = 0
+
+                person.reliability = detection.Confidence
+                persons.append(person)
+                self.lastperson=person#safe last person detection
         return persons
 
  
@@ -243,7 +270,6 @@ class PeopleLocaliser():
         timestamp : rospy.rostime.Time
             the time stamp of when the picture has been taken
         """
-        rospy.loginfo("Entered rosPeoplemsg")
 
         if len(persons)>0: #If we detected at least one person update the timestamp of the latest succesful detection
             self.latestTimeStamp=self.timestamp
@@ -256,46 +282,11 @@ class PeopleLocaliser():
             people.header.frame_id = frameid
 
             self.peoplePub.publish(people)
-        
-    def rosBBmsg(self, detections):
-        """
-        Parameters
-        ----------
-        detections : detectNet.Detection[]
-            an array of all detections
-        """
-
-        rospy.loginfo("Entered rosBBmsg")
-
-        Boxes = BoundingBoxes()
-        Box = BoundingBox()
-        Index = 0
-        for detection in detections:
-            Box.Class = str(self.getClass(detection.ClassID))
-            Box.probability = float(detection.Confidence)
-            Box.id = int(detection.ClassID)
-            Box.xmin = int(detection.Left)
-            Box.xmax = int(detection.Right)
-            Box.ymin = int(detection.Top)
-            Box.ymax = int(detection.Bottom)
-
-            Boxes.bounding_boxes.append(Box)
-            Index += 1
-
-        Boxes.header.stamp = rospy.Time.now()
-        self.bbPub.publish(Boxes)
-
-    def __del__(self):
-        print("Detector destroyed")
-        self.pipeline.stop()
 
 if __name__ == "__main__":
     #get path of the weights from rospkg so we can use it relative
     rospack = rospkg.RosPack()
-
-    rospy.init_node('people_detection')
-    r = rospy.Rate(10) # 10hz
-
+    rospy.init_node('people_localiser')
     detector = PeopleLocaliser()
 
     while not rospy.is_shutdown():
