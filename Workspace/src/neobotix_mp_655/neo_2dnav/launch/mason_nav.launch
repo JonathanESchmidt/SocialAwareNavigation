@@ -7,6 +7,8 @@
   <arg name="sim" default="false"/>
   <arg name="debug" default="false"/>
 
+  <param name="robot_description" command="xacro '$(find neo_description)/robots/neobotix_base.urdf.xacro' platform_configuration:=$(arg platform_configuration)"/>
+
    <!-- Neobotix -->
   <include file="$(find neo_bringup)/launch/bringup_mp_655_remote.launch">
   </include>
