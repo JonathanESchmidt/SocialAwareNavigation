@@ -6,7 +6,7 @@
   <arg name="env_map" default="$(find neo_bringup)/maps/$(arg map_name)" />
   <arg name="sim" default="false"/>
   <arg name="debug" default="false"/>
-
+  <arg name="platform_configuration" default="neo-aal" doc="platform configuration type [neo-aal, neo-cph]"/>
   <param name="robot_description" command="xacro '$(find neo_description)/robots/neobotix_base.urdf.xacro' platform_configuration:=$(arg platform_configuration)"/>
 
    <!-- Neobotix -->
