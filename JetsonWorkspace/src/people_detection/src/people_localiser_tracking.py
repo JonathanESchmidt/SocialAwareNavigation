@@ -76,14 +76,19 @@ class PeopleLocaliser():
         self.resolutionY = resolution[1]
 
 
-        self.kf = cv2.KalmanFilter(4,2) # Kalman filter with states[x,y,dx,dy] and measurements x,y
+        self.kf = cv2.KalmanFilter(4,2,0) # Kalman filter with states[x,y,dx,dy] and measurements x,y and no control
         self.kf.processNoiseCov=np.array([  [1e-2, 0, 0, 0],
                                             [0, 1e-2, 0, 0],
                                             [0, 0, 5, 0],
                                             [0, 0, 0, 5]],dtype=np.float32) # noise values from https://github.com/Myzhar/simple-opencv-kalman-tracker/blob/master/source/opencv-kalman.cpp
-        self.kf.measurementNoiseCov=1e-1*np.eye(2, dtype=np.float32)
-        self.kf.measurementMatrix=np.eye(2, dtype=np.float32)
-        self.kf.transitionMatrix=np.eye(2, dtype=np.float32)
+        cv2.setIdentity(self.kf.measurementNoiseCov, 1e-1)
+        self.kf.measurementMatrix=np.array([    [1, 0, 0, 0],
+                                                [0, 1, 0, 0]],dtype=np.float32)
+        self.kf.transitionMatrix = np.array([[1, 0, 1, 0],
+                                        [0, 1, 0, 1],
+                                        [0, 0, 1, 0],
+                                        [0, 0, 0, 1]],np.float32)
+        cv2.setIdentity(self.kf.errorCovPost, 1)
         self.state=np.zeros(4, dtype=np.float32)
         self.ms = np.zeros(2, dtype=np.float32)
 
