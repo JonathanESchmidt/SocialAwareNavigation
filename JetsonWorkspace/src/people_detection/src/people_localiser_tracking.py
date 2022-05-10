@@ -262,7 +262,7 @@ class PeopleLocaliser():
                 if not deltat==0:#aproximate velocity based on the last two positions and their time difference between the last two predictions TODO try to use other states of kf instead
                     #works only for one person in the scene otherwise use hungarian algorithm or simillar
                     self.kf.transitionMatrix[0,2] = deltat  #update deltat of kalman filter to the duration of this detection needs to be done since we dont run at fixed framerate
-                    self.kf.transitionMatrix[1,4] = deltat
+                    self.kf.transitionMatrix[1,3] = deltat
                     self.state = self.kf.predict()          #predict the new cartesian position of the person
                     person.position.x = self.state[0]
                     person.position.y = self.state[1] 
