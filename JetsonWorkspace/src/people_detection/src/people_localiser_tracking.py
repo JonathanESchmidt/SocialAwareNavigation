@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 
-from cmath import sin
-from pickletools import optimize
-from turtle import right
 import rospy
 import rospkg
 import jetson.inference
@@ -10,14 +7,12 @@ import jetson.utils
 
 import sys
 
-from people_detection.msg import BoundingBox,BoundingBoxes
 from people_msgs.msg import People,Person
 from sensor_msgs.msg import Image,CameraInfo
 
 from cv_bridge import CvBridge
 import cv2
 import numpy as np
-
 from scipy import optimize
 from tracker import tracker
 
