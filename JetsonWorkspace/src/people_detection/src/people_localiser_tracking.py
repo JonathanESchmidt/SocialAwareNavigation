@@ -80,10 +80,10 @@ class PeopleLocaliser():
         self.kf.processNoiseCov=np.array([  [1e-2, 0, 0, 0],
                                             [0, 1e-2, 0, 0],
                                             [0, 0, 5, 0],
-                                            [0, 0, 0, 5]],np.float32) # noise values from https://github.com/Myzhar/simple-opencv-kalman-tracker/blob/master/source/opencv-kalman.cpp
-        self.kf.measurementNoiseCov=np.eye(1e-1, np.float32)
-        self.state=np.zeros(4, np.float32)
-        self.ms = np.zeros(2, np.float32)
+                                            [0, 0, 0, 5]],dtype=np.float32) # noise values from https://github.com/Myzhar/simple-opencv-kalman-tracker/blob/master/source/opencv-kalman.cpp
+        self.kf.measurementNoiseCov=np.eye(1e-1, dtype=np.float32)
+        self.state=np.zeros(4, dtype=np.float32)
+        self.ms = np.zeros(2, dtype=np.float32)
 
 
 
