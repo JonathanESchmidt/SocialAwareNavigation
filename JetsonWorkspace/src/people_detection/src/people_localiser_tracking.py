@@ -82,6 +82,8 @@ class PeopleLocaliser():
                                             [0, 0, 5, 0],
                                             [0, 0, 0, 5]],dtype=np.float32) # noise values from https://github.com/Myzhar/simple-opencv-kalman-tracker/blob/master/source/opencv-kalman.cpp
         self.kf.measurementNoiseCov=1e-1*np.eye(2, dtype=np.float32)
+        self.kf.measurementMatrix=np.eye(2, dtype=np.float32)
+        self.kf.transitionMatrix=np.eye(2, dtype=np.float32)
         self.state=np.zeros(4, dtype=np.float32)
         self.ms = np.zeros(2, dtype=np.float32)
 
@@ -238,6 +240,7 @@ class PeopleLocaliser():
         x = None
         y = None
         peopledetections=[]
+        
         for detection in detections:
             if int(detection.ClassID) == 1:#Only do this if its a person
                 peopledetections.append(detection)
@@ -255,8 +258,7 @@ class PeopleLocaliser():
                 y= np.sin(angle) * distance 
 
                 #Tracking measurement
-                self.ms[0] = x
-                self.ms[1] = y
+                self.ms = np.array([x, y],dtype=np.float32)
                 self.kf.correct(self.ms)
 
                 if not deltat==0:#aproximate velocity based on the last two positions and their time difference between the last two predictions TODO try to use other states of kf instead
