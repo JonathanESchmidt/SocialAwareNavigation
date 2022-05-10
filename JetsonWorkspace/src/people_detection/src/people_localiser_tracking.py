@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from cmath import sin
+from pickletools import optimize
 from turtle import right
 import rospy
 import rospkg
@@ -16,7 +17,9 @@ from sensor_msgs.msg import Image,CameraInfo
 from cv_bridge import CvBridge
 import cv2
 import numpy as np
-import csv
+
+from scipy import optimize
+from tracker import tracker
 
 class PeopleLocaliser():
     """
@@ -75,24 +78,7 @@ class PeopleLocaliser():
         self.resolutionX = resolution[0]
         self.resolutionY = resolution[1]
 
-
-        self.kf = cv2.KalmanFilter(4,2,0) # Kalman filter with states[x,y,dx,dy] and measurements x,y and no control
-        self.kf.processNoiseCov=np.array([  [1e-2, 0, 0, 0],
-                                            [0, 1e-2, 0, 0],
-                                            [0, 0, 5, 0],
-                                            [0, 0, 0, 5]],dtype=np.float32) # noise values from https://github.com/Myzhar/simple-opencv-kalman-tracker/blob/master/source/opencv-kalman.cpp
-        cv2.setIdentity(self.kf.measurementNoiseCov, 1e-1)
-        self.kf.measurementMatrix=np.array([    [1, 0, 0, 0],
-                                                [0, 1, 0, 0]],dtype=np.float32)
-        self.kf.transitionMatrix = np.array([[1, 0, 1, 0],
-                                        [0, 1, 0, 1],
-                                        [0, 0, 1, 0],
-                                        [0, 0, 0, 1]],np.float32)
-        cv2.setIdentity(self.kf.errorCovPost, 1)
-        self.state=np.zeros(4, dtype=np.float32)
-        self.ms = np.zeros(2, dtype=np.float32)
-
-
+        self.trackers=None
 
         self.HFOV = HFOV 
         self.threshold = threshold
@@ -118,19 +104,13 @@ class PeopleLocaliser():
             #TODO: use the get class function for detections
             pass
         
-        self.initdetectNet()
+        self.net = jetson.inference.detectNet(self.networkname, sys.argv, self.threshold)
 
         #TODO: add system for publishing Bounding boxes
 
         #Definition of subscribers to the realsense topics
         self.rgb_sub = rospy.Subscriber('/camera/color/image_raw', Image, self.rgb_callback)
-        #self.rgb_info_sub = rospy.Subscriber('/camera/color/camera_info', CameraInfo, self.rgb_info_callback)
         self.depth_sub = rospy.Subscriber('/camera/aligned_depth_to_color/image_raw', Image, self.depth_callback)
-
-    #def rgb_info_callback(self, info):
-    #    self.resolutionX=info.width
-    #    self.resolutionY=info.height
-
     def rgb_callback(self, rgb):
         try:
             self.rgb = self.bridge.imgmsg_to_cv2(rgb, desired_encoding='passthrough')
@@ -142,7 +122,6 @@ class PeopleLocaliser():
             self.depth = np.array(depth, dtype=np.float32)*0.001
         except:
             pass
-    
     def findPeople(self):
         """
         Main function for detection and publishing people
@@ -150,7 +129,7 @@ class PeopleLocaliser():
 
         self.timestamp = rospy.Time.now()
         frameid = 'base_link' #Stand-in until added to capture image
-        colour, depth = self.captureImages()
+        colour, depth = self.rgb, self.depth
 
         #Check if there is images available
         if not isinstance(colour, type(None)) and not isinstance(depth, type(None)):
@@ -159,8 +138,7 @@ class PeopleLocaliser():
         
             self.rosPeoplemsg(people, frameid, self.timestamp)
             return True
-        else: return False
-        
+        else: return False       
     def findPosition(self, top, left, right, bottom, depth):
         """
         Parameters
@@ -207,23 +185,17 @@ class PeopleLocaliser():
         distance = distance*np.cos(delta)
         #Output in polar coordinates such that angles to the left are positive and angles to the right are negative
         #Distance Forward is positiv backwards not possible
-        return distance, gamma
 
-    def captureImages(self):    
-        """
-        -------
-        Assign current images for detection
-        """
-        return self.rgb, self.depth
 
-    def getClass(self, Index):
-        return self.labels[Index]#in case there is no function otherwise overwrite
-
-    def initdetectNet(self):
-        self.net = jetson.inference.detectNet(self.networkname, sys.argv, self.threshold)
-
+        x = np.cos(gamma) * distance
+        y = np.sin(gamma) * distance 
+        return x, y
     def detectSSD(self, image, depth):#this is very specific to the network architecture so pass
         """
+        BRIEF
+        ----------
+        This function runs multiobject tracking based on kalman filters and the hungarian method
+
         Parameters
         ----------
         image : np.array[]
@@ -239,65 +211,55 @@ class PeopleLocaliser():
         cudaimage = jetson.utils.cudaFromNumpy(cudaimage)
 
         detections = self.net.Detect(cudaimage, cudaimage.shape[1], cudaimage.shape[0])#returning the detected objects
+
+        coordinates = []
         persons = []
-        distance = None
-        angle = None
-        x = None
-        y = None
-        peopledetections=[]
-        
+
         for detection in detections:
-            if int(detection.ClassID) == 1:#Only do this if its a person
-                peopledetections.append(detection)
+            if int(detection.ClassID) == 1:
+                #perform trigonmetry to get carrtesian coordinates and safe all relevant data in coordinates
+                coordinates.append([self.findPosition(detection.Top, detection.Left, detection.Right, detection.Bottom, depth),detection.Confidence])
 
+        if len(coordinates>0):
+            #created costmatrix for hungarian method
+            #cost matrix has a row for each detection and a column for each tracker
+            if len(coordinates) > len(self.trackers):                           #if more detections than trackers exist add a row
+                costmatrix=np.zeros(len(coordinates),len(coordinates))
+            else:
+                costmatrix=np.zeros(len(coordinates),len(self.trackers))        #if more trackers exist make cost matrix rectangular and remove using skipy function
+
+            for i in range(len(self.trackers)):                                 #calculate the cost between each existing tracker and each detection
+                for j in range(coordinates):
+                    costmatrix[j,i]=np.sqrt(np.square(self.trackers[i].predict(self.timestamp)[0]-coordinates[j][0])+np.square(self.trackers[i].predict(self.timestamp)[1]-coordinates[j][1]))
+                
+            row_ind, col_ind = optimize.linear_sum_assignment(costmatrix)       #run hungarian method
+
+
+            for i in range(len(col_ind)):                                       #update all assigned trackers
                 person = Person()
+                x=coordinates[row_ind[i]][0]
+                y=coordinates[row_ind[i]][1]
 
-                distance, angle = self.findPosition(detection.Top, detection.Left, detection.Right, detection.Bottom, depth)
+                for i in range(np.max(col_ind)-len(self.trackers)):             #append new necessary trackers
+                    self.trackers.append(tracker())
 
-                deltat=(self.timestamp.to_sec()-self.latestTimeStamp.to_sec())
+                state = self.trackers[col_ind[i]].update(x,y,self.timestamp)    #get updated tracker pose
+
+                person.name = str(col_ind[i])
+                person.position.x = state[0]
+                person.position.y = state[1] 
+                person.position.z = 0
                 
-
-                person.name = "Bob"
-                
-                x= np.cos(angle) * distance
-                y= np.sin(angle) * distance 
-
-                #Tracking measurement
-                self.ms = np.array([x, y],dtype=np.float32)
-                self.kf.correct(self.ms)
-
-                if not deltat==0:#aproximate velocity based on the last two positions and their time difference between the last two predictions
-                    #works only for one person in the scene otherwise use hungarian algorithm or simillar
-                    self.kf.transitionMatrix[0,2] = deltat  #update deltat of kalman filter to the duration of this detection needs to be done since we dont run at fixed framerate
-                    self.kf.transitionMatrix[1,3] = deltat
-                    self.state = self.kf.predict()          #predict the new cartesian position of the person
-                    person.position.x = self.state[0]
-                    person.position.y = self.state[1] 
-                    person.position.z = 0
-                    
-                    person.velocity.x = self.state[2]
-                    person.velocity.y = self.state[3]
-                    person.velocity.z = 0
-                else:
-                    #first detection cannot have velocities yet since it is lacking behind
-                    #cannot predict for first detection so set measurement
-                    self.kf.statePost = np.array([x, y, 0, 0])#init kalman filter with first measurment so it doesn start at 0
-                    self.kf.statePre = np.array([x, y, 0, 0])
-                    self.kf.errorCovPre=np.eye(4)
-                    person.position.x = x
-                    person.position.y = y
-                    person.position.z = 0
-                    
-                    person.velocity.x = 0
-                    person.velocity.y = 0
-                    person.velocity.z = 0
-
-                person.reliability = detection.Confidence
+                person.velocity.x = state[2]
+                person.velocity.y = state[3]
+                person.velocity.z = 0
+                person.reliability = coordinates[2]
                 persons.append(person)
-                self.lastperson=person#safe last person detection
-        return persons
 
- 
+
+            self.trackers=[tracker for tracker in self.trackers if (self.timestamp-tracker.timestamp)<self.peopleKeepTime] #remove all trackers that have no assigned people within keepTime
+
+        return persons
     def rosPeoplemsg(self, persons, frameid, timestamp):
         """
         Parameters
@@ -310,21 +272,17 @@ class PeopleLocaliser():
             the time stamp of when the picture has been taken
         """
 
-        if len(persons)>0: #If we detected at least one person update the timestamp of the latest succesful detection
-            self.latestTimeStamp=self.timestamp
         ### We want to publish persons if we detect at least one
-        ### Or we want to publish an empty people message if the detections have been of len 0 for more the people keep time
-        if  len(persons)>0 or (self.timestamp.to_sec()-self.latestTimeStamp.to_sec())>self.peopleKeepTime:
+        ### Or we want to publish an empty people message if no valid trackers are running
+        if  len(persons)>0 or len(self.trackers)==0:
             people = People()
             people.people = persons
-            people.header.stamp = timestamp#we might want to make this the time of when the camera recorded the people
+            people.header.stamp = timestamp #TODO we might want to make this the time of when the camera recorded the people
             people.header.frame_id = frameid
 
             self.peoplePub.publish(people)
 
 if __name__ == "__main__":
-    #get path of the weights from rospkg so we can use it relative
-    rospack = rospkg.RosPack()
     rospy.init_node('people_localiser')
     detector = PeopleLocaliser()
 
