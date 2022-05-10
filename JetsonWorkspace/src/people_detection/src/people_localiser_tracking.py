@@ -81,7 +81,7 @@ class PeopleLocaliser():
                                             [0, 1e-2, 0, 0],
                                             [0, 0, 5, 0],
                                             [0, 0, 0, 5]],dtype=np.float32) # noise values from https://github.com/Myzhar/simple-opencv-kalman-tracker/blob/master/source/opencv-kalman.cpp
-        self.kf.measurementNoiseCov=1e-1*np.eye(2,2, dtype=np.float32)
+        self.kf.measurementNoiseCov=1e-1*np.eye(2, dtype=np.float32)
         self.state=np.zeros(4, dtype=np.float32)
         self.ms = np.zeros(2, dtype=np.float32)
 
@@ -274,8 +274,10 @@ class PeopleLocaliser():
                 else:
                     #first detection cannot have velocities yet since it is lacking behind
                     #cannot predict for first detection so set measurement
-                    person.position.x = self.ms[0]
-                    person.position.y = self.ms[1] 
+                    self.KF.statePost = np.array([x, y, 0, 0])#init kalman filter with first measurment so it doesn start at 0
+                    self.KF.statePre = np.array([x, y, 0, 0])
+                    person.position.x = x
+                    person.position.y = y
                     person.position.z = 0
                     
                     person.velocity.x = 0
