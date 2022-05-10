@@ -266,7 +266,7 @@ class PeopleLocaliser():
                 self.ms = np.array([x, y],dtype=np.float32)
                 self.kf.correct(self.ms)
 
-                if not deltat==0:#aproximate velocity based on the last two positions and their time difference between the last two predictions TODO try to use other states of kf instead
+                if not deltat==0:#aproximate velocity based on the last two positions and their time difference between the last two predictions
                     #works only for one person in the scene otherwise use hungarian algorithm or simillar
                     self.kf.transitionMatrix[0,2] = deltat  #update deltat of kalman filter to the duration of this detection needs to be done since we dont run at fixed framerate
                     self.kf.transitionMatrix[1,3] = deltat
@@ -275,8 +275,8 @@ class PeopleLocaliser():
                     person.position.y = self.state[1] 
                     person.position.z = 0
                     
-                    person.velocity.x = (x-self.lastperson.position.x)/deltat
-                    person.velocity.y = (y-self.lastperson.position.y)/deltat
+                    person.velocity.x = self.state[2]
+                    person.velocity.y = self.state[3]
                     person.velocity.z = 0
                 else:
                     #first detection cannot have velocities yet since it is lacking behind
