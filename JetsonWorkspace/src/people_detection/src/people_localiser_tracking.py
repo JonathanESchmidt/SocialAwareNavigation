@@ -274,8 +274,9 @@ class PeopleLocaliser():
                 else:
                     #first detection cannot have velocities yet since it is lacking behind
                     #cannot predict for first detection so set measurement
-                    self.KF.statePost = np.array([x, y, 0, 0])#init kalman filter with first measurment so it doesn start at 0
-                    self.KF.statePre = np.array([x, y, 0, 0])
+                    self.kf.statePost = np.array([x, y, 0, 0])#init kalman filter with first measurment so it doesn start at 0
+                    self.kf.statePre = np.array([x, y, 0, 0])
+                    self.kf.errorCovPre=np.eye(4)
                     person.position.x = x
                     person.position.y = y
                     person.position.z = 0
