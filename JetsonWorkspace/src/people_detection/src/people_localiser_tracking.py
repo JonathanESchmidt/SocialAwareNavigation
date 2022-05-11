@@ -73,7 +73,7 @@ class PeopleLocaliser():
         self.resolutionX = resolution[0]
         self.resolutionY = resolution[1]
 
-        self.trackers=None
+        self.trackers=[]
 
         self.HFOV = HFOV 
         self.threshold = threshold
@@ -210,12 +210,13 @@ class PeopleLocaliser():
         coordinates = []
         persons = []
 
-        for detection in detections:
-            if int(detection.ClassID) == 1:
-                #perform trigonmetry to get carrtesian coordinates and safe all relevant data in coordinates
-                coordinates.append([self.findPosition(detection.Top, detection.Left, detection.Right, detection.Bottom, depth),detection.Confidence])
+        #filter out all detections that are enot human
+        detections = [detection for detection in detections if detection.ClassID == 1]
+        
+        for j in range(len(detections)):
+            #perform trigonmetry to get carrtesian coordinates and safe all relevant data in coordinates
+            coordinates.append([self.findPosition(detections[j].Top, detections[j].Left, detections[j].Right, detections[j].Bottom, depth),detections[j].Confidence])
 
-        if len(coordinates>0):
             #created costmatrix for hungarian method
             #cost matrix has a row for each detection and a column for each tracker
             if len(coordinates) > len(self.trackers):                           #if more detections than trackers exist add a row
@@ -223,36 +224,36 @@ class PeopleLocaliser():
             else:
                 costmatrix=np.zeros(len(coordinates),len(self.trackers))        #if more trackers exist make cost matrix rectangular and remove using skipy function
 
-            for i in range(len(self.trackers)):                                 #calculate the cost between each existing tracker and each detection
-                for j in range(coordinates):
-                    costmatrix[j,i]=np.sqrt(np.square(self.trackers[i].predict(self.timestamp)[0]-coordinates[j][0])+np.square(self.trackers[i].predict(self.timestamp)[1]-coordinates[j][1]))
+            for i in range(len(self.trackers)):
+                diffx=self.trackers[i].predict(self.timestamp)[0]-coordinates[j][0]
+                diffy=self.trackers[i].predict(self.timestamp)[1]-coordinates[j][1]
+                costmatrix[j,i]=np.sqrt(np.square(diffx)+np.square(diffy))      #create costmatrix based on euclidean distance to the predicted state
                 
-            row_ind, col_ind = optimize.linear_sum_assignment(costmatrix)       #run hungarian method
+        row_ind, col_ind = optimize.linear_sum_assignment(costmatrix)       #run hungarian method
+
+        for i in range(np.max(col_ind)-len(self.trackers)):             #append new necessary trackers
+            self.trackers.append(tracker())
+
+        for i in range(len(col_ind)):                                       #update all assigned trackers
+            person = Person()
+            x=coordinates[row_ind[i]][0]
+            y=coordinates[row_ind[i]][1]
+
+            state = self.trackers[col_ind[i]].update(x,y,self.timestamp)    #get updated tracker pose
+
+            person.name = str(col_ind[i])
+            person.position.x = state[0]
+            person.position.y = state[1] 
+            person.position.z = 0
+            
+            person.velocity.x = state[2]
+            person.velocity.y = state[3]
+            person.velocity.z = 0
+            person.reliability = coordinates[2]
+            persons.append(person)
 
 
-            for i in range(len(col_ind)):                                       #update all assigned trackers
-                person = Person()
-                x=coordinates[row_ind[i]][0]
-                y=coordinates[row_ind[i]][1]
-
-                for i in range(np.max(col_ind)-len(self.trackers)):             #append new necessary trackers
-                    self.trackers.append(tracker())
-
-                state = self.trackers[col_ind[i]].update(x,y,self.timestamp)    #get updated tracker pose
-
-                person.name = str(col_ind[i])
-                person.position.x = state[0]
-                person.position.y = state[1] 
-                person.position.z = 0
-                
-                person.velocity.x = state[2]
-                person.velocity.y = state[3]
-                person.velocity.z = 0
-                person.reliability = coordinates[2]
-                persons.append(person)
-
-
-            self.trackers=[tracker for tracker in self.trackers if (self.timestamp-tracker.timestamp)<self.peopleKeepTime] #remove all trackers that have no assigned people within keepTime
+        self.trackers=[tracker for tracker in self.trackers if (self.timestamp-tracker.timestamp)<self.peopleKeepTime] #remove all trackers that have no assigned people within keepTime
 
         return persons
     def rosPeoplemsg(self, persons, frameid, timestamp):
