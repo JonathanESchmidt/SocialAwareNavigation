@@ -12,7 +12,7 @@ TebLocalPlannerROS:
   max_global_plan_lookahead_dist: 3.0      # Specify maximum length (cumulative Euclidean distances) of the subset of the global plan taken into account for optimization [if 0 or negative: disabled; the length is also bounded by the local costmap size]
   force_reinit_new_goal_dist: 1.0          # Force the planner to reinitialize the trajectory if a previous goal is updated with a seperation of more than the specified value in meters (skip hot-starting)
   feasibility_check_no_poses: 5            # Specify up to which pose on the predicted plan the feasibility should be checked each sampling interval
-  global_plan_viapoint_sep: -0.1           # Min. separation between each two consecutive via-points extracted from the global plan [if negative: disabled]
+  global_plan_viapoint_sep: 0.4        # Min. separation between each two consecutive via-points extracted from the global plan [if negative: disabled]
   via_points_ordered: false                # If true, the planner adheres to the order of via-points in the storage container
   exact_arc_length: false                  # If true, the planner uses the exact arc length in velocity, acceleration and turning rate computations [-> increased cpu time], otherwise the euclidean approximation is used.
   publish_feedback: false                  # Publish planner feedback containing the full trajectory and a list of active obstacles (should be enabled only for evaluation or debugging purposes)
@@ -73,7 +73,7 @@ TebLocalPlannerROS:
   weight_inflation: 0.1                    # Optimization weight for the inflation penalty (should be small)
   weight_dynamic_obstacle: 50.0            # Optimization weight for satisfying a minimum seperation from dynamic obstacles
   weight_dynamic_obstacle_inflation: 0.1   # Optimization weight for the inflation penalty of dynamic obstacles (should be small)
-  weight_viapoint: 1.0                     # Optimization weight for minimizing the distance to via-points
+  weight_viapoint: 25.0  # ROB864                 # Optimization weight for minimizing the distance to via-points
   weight_adapt_factor: 2.0                 # Some special weights (currently 'weight_obstacle') are repeatedly scaled by this factor in each outer TEB iteration (weight_new: weight_old * factor); Increasing weights iteratively instead of setting a huge value a-priori leads to better numerical conditions of the underlying optimization problem.
 
   # Homotopy Class Planner
