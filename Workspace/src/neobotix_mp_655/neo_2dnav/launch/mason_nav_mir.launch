@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- THIS WILL NOT RUN WITHOUT A MAP ! -->
+  <!-- REPLACE THIS LINE WITH PATH TO MAP, ONCE IT IS MADE USING nav2dslam.launch -->
+
+
+
+  <!-- Arguments -->
+  <arg name="open_rviz" default="true"/>
+  <arg name="mapping" default="false" />
+  <arg name="map_name" default="fib14labmirrecording.yaml" />
+  <arg name="env_map" default="$(find neo_2dnav)/maps/config/$(arg map_name)" />
+
+  <!-- Connect to MiR100 platform -->
+  <include file="$(find neo_2dnav)/launch/mir.launch" />
+
+  <!--- Run SLAM or AMCL -->
+  <group if="$(arg mapping)">
+    <include file="$(find neo_2dnav)/launch/hector_mapping_mir.launch" />
+  </group>
+  <group unless="$(arg mapping)">
+    <include file="$(find neo_2dnav)/launch/amcl_mir.launch" />
+  </group>
+
+
+  <!-- Load map -->
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg env_map)"/>
+
+  <node pkg="tf" type="static_transform_publisher" name="robot_projector_link" args="0.0 0 1.0 -1.57 0 -0.87 base_link projector_top_plate_link 100" />
+
+  <!-- Run move_base -->
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+    <!-- Set local planner -->
+    <rosparam file="$(find neo_2dnav)/config/mir/move_base_common_params.yaml" command="load" />
+    <param name="base_global_planner" value="global_planner/GlobalPlanner"/>
+    <rosparam file="$(find neo_2dnav)/config/planner_global_base.yaml" command="load" />
+    <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS"/>
+    <rosparam file="$(find neo_2dnav)/config/planner_local_teb_mir.yaml" command="load" />
+
+    <!-- Global -->
+    <rosparam file="$(find neo_2dnav)/config/costmap_common_params.yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find neo_2dnav)/config/mir/costmap_global_params.yaml" command="load" />
+
+    <!-- Local -->
+    <rosparam file="$(find neo_2dnav)/config/costmap_common_params.yaml" command="load" ns="local_costmap" />
+    <rosparam file="$(find neo_2dnav)/config/mir/costmap_local_params.yaml" command="load"/>
+
+    <!-- Load local planner configuration -->
+
+  </node>
+
+  <!-- For calibration profile and pose of the projector -->
+	<include file="$(find arrow_projection)/launch/arrow_projection.launch"/>
+
+  <!-- The actual arrow projection - probably not in use at the moment: Might be able to be left out -->
+  <node name="path_projection_node" pkg="arrow_projection" type="path_projection_node" respawn="true"/>
+
+  <!-- RViz -->
+  <group if="$(arg open_rviz)">
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find arrow_projection)/rviz/MASON.rviz"/>
+  </group>
+
+  <!-- Displaying Rviz camera image for projector -->
+  <node name="image_view" pkg="image_view" type="image_view" args="image:=/projector/image"/>
+
+</launch>
