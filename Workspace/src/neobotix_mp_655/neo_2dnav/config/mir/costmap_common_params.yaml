@@ -16,7 +16,7 @@ obstacles:
     clearing: false
     marking: true
     inf_is_valid: false
-    min_obstacle_height: 0.13
+    min_obstacle_height: 0
     max_obstacle_height: 0.25
   b_scan_clearing:
     topic: b_scan_rep117
@@ -24,7 +24,7 @@ obstacles:
     clearing: true
     marking: false
     inf_is_valid: false
-    min_obstacle_height: 0.13
+    min_obstacle_height: 0
     max_obstacle_height: 0.25
   f_scan_marking:
     topic: f_scan_rep117
@@ -32,7 +32,7 @@ obstacles:
     clearing: false
     marking: true
     inf_is_valid: false
-    min_obstacle_height: 0.13
+    min_obstacle_height: 0
     max_obstacle_height: 0.25
   f_scan_clearing:
     topic: f_scan_rep117
@@ -40,5 +40,5 @@ obstacles:
     clearing: true
     marking: false
     inf_is_valid: false
-    min_obstacle_height: 0.13
+    min_obstacle_height: 0
     max_obstacle_height: 0.25
