@@ -3,6 +3,7 @@
   <!-- Arguments -->
   <arg name="open_rviz" default="true"/>
   <arg name="social"/>
+  <arg name="projector"/>
   <arg name="mapping" default="false" />
 
   <node pkg="tf" type="static_transform_publisher" name="robot_projector_link" args="0.506 0 1.03 -1.57 0 -0.87 base_link projector_top_plate_link 100" />
@@ -51,11 +52,15 @@
     </node>
   </group>
   
-  <!-- For calibration profile and pose of the projector -->
-	<include file="$(find arrow_projection)/launch/arrow_projection.launch"/>
+  <group if="$(arg projector)">
+    <!-- For calibration profile and pose of the projector -->
+    <include file="$(find arrow_projection)/launch/arrow_projection.launch"/>
+    
 
-  <!-- The actual arrow projection - probably not in use at the moment: Might be able to be left out -->
-  <node name="path_projection_node" pkg="arrow_projection" type="path_projection_node" respawn="true"/>
+    <!-- The actual arrow projection - probably not in use at the moment: Might be able to be left out -->
+    <node name="path_projection_node" pkg="arrow_projection" type="path_projection_node" respawn="true"/>
+  </group>
+
 
   <!-- RViz -->
   <group if="$(arg open_rviz)">
