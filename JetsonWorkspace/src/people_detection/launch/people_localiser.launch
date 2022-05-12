@@ -1,5 +1,5 @@
 <launch>
-    <node pkg="tf" type="static_transform_publisher" name="robot_projector_link" args="0.586 0 1.11 0 0 0 base_link camera_link 100" />
+    <node pkg="tf" type="static_transform_publisher" name="robot_projector_link" args="-0.075 0 1.025 0 0 0 base_link camera_link 100" />
     <include file="$(find people_detection)/launch/realsense.launch"/>
     <node name="people_localiser" pkg="people_detection" type="people_localiser.py" output="screen"/>
 </launch>
