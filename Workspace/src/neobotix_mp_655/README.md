@@ -60,3 +60,34 @@ Where both 'social' and 'projector' can be set to 'true' or 'false' dependant on
 ### Environment details
 
 As there are nodes running on different devices connected via Ethernet, great care needs to be taken when exporting the **ROS_MASTER_URI** and **ROS_HOSTNAME** in the ~/.bashrc files on each device. 
+
+### Time Sync
+
+Check the date of the jetson using
+```
+date
+```
+If time/date is off retart the ntp server on the laptop by using
+```
+/etc/init.d/chrony stop
+/etc/init.d/chrony start
+```
+
+Then go to the jetson and execute
+
+```
+sudo ntpdate 192.168.87.214 (ip adress of the laptop)
+```
+
+Check the new time of the jetson using
+```
+date
+```
+
+Everything should by synced now
+
+If ip adress of the jetson or the laptop changes adjust the adresses that can be found at the bottom of the file:
+
+```
+/etc/chrony/chrony.conf
+```
