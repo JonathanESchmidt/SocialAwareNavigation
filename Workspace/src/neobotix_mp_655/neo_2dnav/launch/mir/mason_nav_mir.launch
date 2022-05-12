@@ -6,7 +6,7 @@
   <arg name="projector"/>
   <arg name="mapping" default="false" />
 
-  <node pkg="tf" type="static_transform_publisher" name="robot_projector_link" args="0.506 0 1.03 -1.57 0 -0.87 base_link projector_top_plate_link 100" />
+  <!--node pkg="tf" type="static_transform_publisher" name="robot_projector_link" args="0.506 0 1.03 -1.57 0 -0.87 base_link projector_top_plate_link 100" /-->
 
   <!-- Run move_base -->
   <group if="$(arg social)">
