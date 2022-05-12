@@ -18,13 +18,13 @@ TebLocalPlannerROS:
   publish_feedback: false                  # Publish planner feedback containing the full trajectory and a list of active obstacles (should be enabled only for evaluation or debugging purposes)
 
   # Robot
-  max_vel_x: 0.8                           # Maximum translational velocity of the robot
-  max_vel_x_backwards: 0.2                 # Maximum translational velocity of the robot for driving backwards
+  max_vel_x: 0.5 #ROB864                   # Maximum translational velocity of the robot
+  max_vel_x_backwards: 0.1 #ROB864         # Maximum translational velocity of the robot for driving backwards
   max_vel_y: 0.0                           # Maximum strafing velocity of the robot (should be zero for non-holonomic robots!)
-  max_vel_theta: 1.0                       # Maximum angular velocity of the robot
-  acc_lim_x: 1.5                           # Maximum translational acceleration of the robot
+  max_vel_theta: 0.5 #ROB864               # Maximum angular velocity of the robot
+  acc_lim_x: 0.5 #ROB864                   # Maximum translational acceleration of the robot
   acc_lim_y: 0.0                           # Maximum strafing acceleration of the robot
-  acc_lim_theta: 2.0                       # Maximum angular acceleration of the robot
+  acc_lim_theta: 0.5 #ROB864               # Maximum angular acceleration of the robot
   min_turning_radius: 0.0                  # Minimum turning radius of a carlike robot (diff-drive robot: zero)
   wheelbase: 1.0                           # The distance between the drive shaft and steering axle (only required for a carlike robot with 'cmd_angle_instead_rotvel' enabled); The value might be negative for back-wheeled robots!
   cmd_angle_instead_rotvel: false          # Substitute the rotational velocity in the commanded velocity message by the corresponding steering angle (check 'axles_distance')
@@ -34,20 +34,20 @@ TebLocalPlannerROS:
     vertices: [[0.506,-0.32],[0.506,0.32],[-0.454,0.32],[-0.454,-0.32]]
 
   # Goal tolerance
-  xy_goal_tolerance: 0.03                  # Allowed final euclidean distance to the goal position
-  yaw_goal_tolerance: 0.08                 # Allowed final orientation error to the goal orientation
+  xy_goal_tolerance: 0.1 #ROB864           # Allowed final euclidean distance to the goal position
+  yaw_goal_tolerance: 0.2 #ROB864          # Allowed final orientation error to the goal orientation
   free_goal_vel: false                     # Allow the robot's velocity to be nonzero for planning purposes (the robot can arrive at the goal with max speed)
 
   # Obstacles
-  min_obstacle_dist: 0.4                   # Minimum desired separation from obstacles
-  inflation_dist: 0.1                      # Buffer zone around obstacles with non-zero penalty costs (should be larger than min_obstacle_dist in order to take effect)
+  min_obstacle_dist: 0.1 #ROB864           # Minimum desired separation from obstacles
+  inflation_dist: 0.6 #ROB864              # Buffer zone around obstacles with non-zero penalty costs (should be larger than min_obstacle_dist in order to take effect)
   dynamic_obstacle_inflation_dist: 0.6     # Buffer zone around predicted locations of dynamic obstacles with non-zero penalty costs (should be larger than min_obstacle_dist in order to take effect)
   include_dynamic_obstacles: false         # Specify whether the movement of dynamic obstacles should be predicted by a constant velocity model (this also changes the homotopy class search). If false, all obstacles are considered to be static.
   include_costmap_obstacles: true          # Specify whether the obstacles in the costmap should be taken into account directly (this is necessary if no seperate clustering and detection is implemented)
   legacy_obstacle_association: false       # If true, the old association strategy is used (for each obstacle, find the nearest TEB pose), otherwise the new one (for each teb pose, find only 'relevant' obstacles).
   obstacle_association_force_inclusion_factor: 1.5  # The non-legacy obstacle association technique tries to connect only relevant obstacles with the discretized trajectory during optimization, all obstacles within a specifed distance are forced to be included (as a multiple of min_obstacle_dist), e.g. choose 2.0 in order to consider obstacles within a radius of 2.0*min_obstacle_dist.
   obstacle_association_cutoff_factor: 5.0           # See obstacle_association_force_inclusion_factor, but beyond a multiple of [value]*min_obstacle_dist all obstacles are ignored during optimization. obstacle_association_force_inclusion_factor is processed first.
-  costmap_obstacles_behind_robot_dist: 1.5 # Limit the occupied local costmap obstacles taken into account for planning behind the robot (specify distance in meters)
+  costmap_obstacles_behind_robot_dist: 1.0 #ROB864 # Limit the occupied local costmap obstacles taken into account for planning behind the robot (specify distance in meters)
   obstacle_poses_affected: 10              # The obstacle position is attached to the closest pose on the trajectory to reduce computational effort, but take a number of neighbors into account as well
   #costmap_converter_plugin: ""            #
   #costmap_converter_spin_thread: true     #
