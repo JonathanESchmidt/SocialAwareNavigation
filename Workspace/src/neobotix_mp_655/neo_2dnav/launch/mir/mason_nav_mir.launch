@@ -40,7 +40,7 @@
 
       <!-- Global -->
       <rosparam file="$(find neo_2dnav)/config/mir/costmap_common_params.yaml" command="load" ns="global_costmap" />
-      <rosparam file="$(find neo_2dnav)/config/mir/costmap_global_params.yaml" command="load" />
+      <rosparam file="$(find neo_2dnav)/config/mir/costmap_global_params_non_social.yaml" command="load" />
 
       <!-- Local -->
       <rosparam file="$(find neo_2dnav)/config/mir/costmap_common_params.yaml" command="load" ns="local_costmap" />
