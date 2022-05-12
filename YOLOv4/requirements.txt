@@ -1,3 +1,0 @@
-tensorflow
-tf2-yolov4
-matplotlib
