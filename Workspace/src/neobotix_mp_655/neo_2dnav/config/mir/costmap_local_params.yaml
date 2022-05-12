@@ -1,7 +1,7 @@
 local_costmap:
   # Coordinate frame and tf parameters
   global_frame: odom
-  transform_tolerance: 1.0  # Specifies the delay in transform (tf) data that is tolerable in seconds.
+  transform_tolerance: 2.0  # Specifies the delay in transform (tf) data that is tolerable in seconds.
                             # This parameter serves as a safeguard to losing a link in the tf tree while
                             # still allowing an amount of latency the user is comfortable with to exist
                             # in the system. For example, a transform being 0.2 seconds out-of-date may
