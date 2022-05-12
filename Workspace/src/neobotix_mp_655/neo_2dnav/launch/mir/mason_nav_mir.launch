@@ -2,31 +2,55 @@
 <launch>
   <!-- Arguments -->
   <arg name="open_rviz" default="true"/>
+  <arg name="social"/>
   <arg name="mapping" default="false" />
 
   <node pkg="tf" type="static_transform_publisher" name="robot_projector_link" args="0.506 0 1.03 -1.57 0 -0.87 base_link projector_top_plate_link 100" />
 
   <!-- Run move_base -->
-  <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
-    <!-- Set local planner -->
-    <rosparam file="$(find neo_2dnav)/config/mir/move_base_common_params.yaml" command="load" />
-    <param name="base_global_planner" value="global_planner/GlobalPlanner"/>
-    <rosparam file="$(find neo_2dnav)/config/mir/planner_global_base.yaml" command="load" />
-    <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS"/>
-    <rosparam file="$(find neo_2dnav)/config/mir/planner_local_teb_mir.yaml" command="load" />
+  <group if="$(arg social)">
+    <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+      <!-- Set local planner -->
+      <rosparam file="$(find neo_2dnav)/config/mir/move_base_common_params.yaml" command="load" />
+      <param name="base_global_planner" value="global_planner/GlobalPlanner"/>
+      <rosparam file="$(find neo_2dnav)/config/mir/planner_global_base.yaml" command="load" />
+      <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS"/>
+      <rosparam file="$(find neo_2dnav)/config/mir/planner_local_teb_mir.yaml" command="load" />
 
-    <!-- Global -->
-    <rosparam file="$(find neo_2dnav)/config/mir/costmap_common_params.yaml" command="load" ns="global_costmap" />
-    <rosparam file="$(find neo_2dnav)/config/mir/costmap_global_params.yaml" command="load" />
+      <!-- Global -->
+      <rosparam file="$(find neo_2dnav)/config/mir/costmap_common_params.yaml" command="load" ns="global_costmap" />
+      <rosparam file="$(find neo_2dnav)/config/mir/costmap_global_params.yaml" command="load" />
 
-    <!-- Local -->
-    <rosparam file="$(find neo_2dnav)/config/mir/costmap_common_params.yaml" command="load" ns="local_costmap" />
-    <rosparam file="$(find neo_2dnav)/config/mir/costmap_local_params.yaml" command="load"/>
+      <!-- Local -->
+      <rosparam file="$(find neo_2dnav)/config/mir/costmap_common_params.yaml" command="load" ns="local_costmap" />
+      <rosparam file="$(find neo_2dnav)/config/mir/costmap_local_params.yaml" command="load"/>
 
-    <!-- Load local planner configuration -->
+      <!-- Load local planner configuration -->
 
-  </node>
+    </node>
+  </group>
+  <group unless="$(arg social)">
+      <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+      <!-- Set local planner -->
+      <rosparam file="$(find neo_2dnav)/config/mir/move_base_common_params.yaml" command="load" />
+      <param name="base_global_planner" value="global_planner/GlobalPlanner"/>
+      <rosparam file="$(find neo_2dnav)/config/mir/planner_global_base.yaml" command="load" />
+      <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS"/>
+      <rosparam file="$(find neo_2dnav)/config/mir/planner_local_teb_mir.yaml" command="load" />
 
+      <!-- Global -->
+      <rosparam file="$(find neo_2dnav)/config/mir/costmap_common_params.yaml" command="load" ns="global_costmap" />
+      <rosparam file="$(find neo_2dnav)/config/mir/costmap_global_params.yaml" command="load" />
+
+      <!-- Local -->
+      <rosparam file="$(find neo_2dnav)/config/mir/costmap_common_params.yaml" command="load" ns="local_costmap" />
+      <rosparam file="$(find neo_2dnav)/config/mir/costmap_local_params.yaml" command="load"/>
+
+      <!-- Load local planner configuration -->
+
+    </node>
+  </group>
+  
   <!-- For calibration profile and pose of the projector -->
 	<include file="$(find arrow_projection)/launch/arrow_projection.launch"/>
 
