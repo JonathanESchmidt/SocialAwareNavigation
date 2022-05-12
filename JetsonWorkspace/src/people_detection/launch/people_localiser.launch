@@ -1,0 +1,4 @@
+<launch>
+    <include file="$(find people_detection)/launch/realsense.launch"/>
+    <node name="people_localiser" pkg="people_detection" type="people_localiser.py" output="screen"/>
+</launch>
