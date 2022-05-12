@@ -25,7 +25,8 @@ The following steps need to be taken in order to bring the entire system online:
 ### 1. MiR Platform
 
 Firstly, the platform needs to be turned on. This is achieved by turning the ON switch on the robot itself. Wait for around a minute to ensure that the WiFi router is fully online.
-Secondly, the MiR platform interface needs to be started. This is done by using the following launch file on the machine mounted on the MiR:
+Secondly, the planner of the MiR platform must be turned off. This is done by going to mir.com in a browser. Go to system and then processes and toggle off the planner topic.
+Thirdly, the MiR platform interface needs to be started. This is done by using the following launch file on the machine mounted on the MiR:
 ```
 roslaunch neo_2dnav mir_bringup.launch
 ```
@@ -52,8 +53,9 @@ roslaunch people_detection people_localiser.launch
 
 Once the MiR platform and people localiser systems are online, the navigation stack (which also includes the video projector) can be started. This is to done on the machine (laptop) mounted on the robot. The command to run the navigation stack is:
 ```
-roslaunch neo_2dnav mason_nav_mir.launch
+roslaunch neo_2dnav mason_nav_mir.launch social:=true projector:=true
 ```
+Where both 'social' and 'projector' can be set to 'true' or 'false' dependant on the test setup.
 
 ### Environment details
 
