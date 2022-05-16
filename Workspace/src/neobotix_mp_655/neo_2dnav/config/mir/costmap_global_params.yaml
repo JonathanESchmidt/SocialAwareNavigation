@@ -24,9 +24,10 @@ global_costmap:
   social_layer/covariance: 0.929 # ROB864
   social_layer/amplitude: 110.0 # ROB864
   social_layer/cutoff: 50.0 # ROB864
+  social_layer/keep_time: 5 #ROB864
 
   plugins:
      - {name: static_map,       type: "costmap_2d::StaticLayer"}
+     - {name: social_layer,     type: "social_navigation_layers::ProxemicLayer"}
      - {name: obstacles,        type: "costmap_2d::ObstacleLayer"}
      - {name: inflation_layer,  type: "costmap_2d::InflationLayer"}
-     - {name: social_layer,     type: "social_navigation_layers::ProxemicLayer"}
