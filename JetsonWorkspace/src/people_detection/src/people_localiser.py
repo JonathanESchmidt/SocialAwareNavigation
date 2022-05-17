@@ -130,7 +130,7 @@ class PeopleLocaliser():
         """
 
         self.timestamp = rospy.Time.now()
-        frameid = 'base_link' #Stand-in until added to capture image
+        frameid = 'camera_link' #Stand-in until added to capture image
         colour, depth = self.captureImages()
 
         #Check if there is images available
