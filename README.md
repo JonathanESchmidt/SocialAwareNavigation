@@ -15,3 +15,6 @@ Christian Rønnest: **cwra18@student.aau.dk** \
 Jonathan Schmidt: **jschmi17@student.aau.dk** \
 Tristan Schwörer: **tschwo21@student.aau.dk** 
 
+## System
+![rqt_graph](https://github.com/JonathanESchmidt/SocialAwareNavigation/blob/main/rosgraph.png)
+![rqt_tf_tree](https://github.com/JonathanESchmidt/SocialAwareNavigation/blob/main/tf_tree.png)
